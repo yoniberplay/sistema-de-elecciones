@@ -1,0 +1,147 @@
+const Ciudadano = require("../models/Ciudadano");
+
+exports.GetCiudadanoList = (req, res, next) => {
+  Ciudadano.findAll()
+    .then((result) => {
+      let ciudadano = result.map((result) => result.dataValues);
+      res.render("ciudadano/ciudadano-list", {
+        pageTitle: "ciudadano",
+        ciudadanoActive: true,
+        ciudadano: ciudadano,
+        hasCiudadano: ciudadano.length > 0,
+      });
+    })
+    .catch((err) => {
+      res.render("Error/ErrorInterno", {
+        pageTitle: "Error Interno",
+        mensaje: err,
+      });
+    });
+};
+
+exports.GetCreateCiudadano = (req, res, next) => {
+  res.render("ciudadano/save-ciudadano", {
+    pageTitle: "Create Ciudadano",
+    ciudadanoActive: true,
+    editMode: false,
+  });
+};
+
+exports.PostCreateCiudadano = (req, res, next) => {
+  const IdDoc = req.body.IdDoc;
+  const name = req.body.name;
+  const lastName = req.body.lastName;
+  const email = req.body.email;
+  const status = true;
+
+  Ciudadano.create({
+    name: name,
+    IdDoc: IdDoc,
+    lastName: lastName,
+    status: status,
+    email: email,
+  })
+    .then((result) => {
+      res.redirect("/ciudadano");
+    })
+    .catch((err) => {
+      res.render("Error/ErrorInterno", {
+        pageTitle: "Error",
+        mensaje: err,
+      });
+    });
+};
+
+exports.GetEditCiudadano = (req, res, next) => {
+  const edit = req.query.edit;
+  const ciudadanoId = req.params.ciudadanoId;
+
+  if (!edit) {
+    return res.redirect("/ciudadano");
+  }
+
+  Ciudadano.findOne({ where: { id: ciudadanoId } })
+    .then((result) => {
+      const pue = result.dataValues;
+      if (!pue) {
+        return res.redirect("/ciudadano");
+      }
+      res.render("ciudadano/save-ciudadano", {
+        pageTitle: "Edit ciudadano",
+        ciudadanoActive: true,
+        editMode: edit,
+        ciudadano: pue,
+      });
+    })
+    .catch((err) => {
+      res.render("Error/ErrorInterno", {
+        pageTitle: "Error Interno",
+        mensaje: err,
+      });
+    });
+};
+
+exports.PostEditCiudadano = (req, res, next) => {
+  const IdDoc = req.body.IdDoc;
+  const name = req.body.name;
+  const lastName = req.body.lastName;
+  const email = req.body.email;
+  const ciudadanoId = req.body.ciudadanoId;
+
+  Ciudadano.update(
+    { 
+      name: name,
+      IdDoc: IdDoc,
+      lastName: lastName,
+      email: email,
+    },
+    { where: { Id: ciudadanoId } }
+  )
+    .then((result) => {
+      return res.redirect("/ciudadano");
+    })
+    .catch((err) => {
+      res.render("Error/ErrorInterno", {
+        pageTitle: "Error Interno",
+        mensaje: err,
+      });
+    });
+};
+
+exports.PostConfirmDeleteCiudadano = (req, res, next) => {
+  const ciudadanoId = req.body.ciudadanoId;
+
+  Ciudadano.findOne({ where: { Id: ciudadanoId } })
+    .then((result) => {
+      const put = result.dataValues;
+      if (!put) {
+        return res.redirect("/ciudadano");
+      }
+      res.render("ciudadano/confirm-delete-ciudadano", {
+        pageTitle: "Confirmacion",
+        ciudadano: put,
+      });
+    })
+    .catch((err) => {
+      res.render("Error/ErrorInterno", {
+        pageTitle: "Error Interno",
+        mensaje: err,
+      });
+    });
+};
+
+exports.PostDeleteCiudadano = (req, res, next) => {
+  const ciudadanoId = req.body.ciudadanoId;
+
+  //! NO SE PUEDEN ELIMINAR NADA SOLO MOSTRAR O NO EN BASE A SU ESTATUS
+  Ciudadano.update({ status: false }, { where: { Id: ciudadanoId } })
+    .then((result) => {
+      return res.redirect("/ciudadano");
+    })
+    .catch((err) => {
+      res.render("Error/ErrorInterno", {
+        pageTitle: "Error Interno",
+        mensaje: err,
+      });
+    });
+};

@@ -136,14 +136,4 @@ exports.PostDeletePartido = (req, res, next) => {
         mensaje: err,
       });
     });
-  // Partido.destroy({ where: { id: partidoId } })
-  // .then((result) => {
-  //   return res.redirect("/partido");
-  // })
-  // .catch((err) => {
-  //     res.render("Error/ErrorInterno", {
-  //         pageTitle: "Error Interno",
-  //         mensaje: err,
-  //       });
-  // });
 };

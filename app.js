@@ -36,7 +36,12 @@ app.engine(
 app.set("view engine", "hbs");
 app.set("views", "views");
 
+// Convertir la data recibida por post en un json
 app.use(express.urlencoded({ extended: false }));
+
+//Hacer los datos de la dentro de la carpeta public e images publicos
+app.use(express.static(path.join(__dirname, "public")));
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -47,18 +52,21 @@ const fileStorage = multer.diskStorage({
   },
 });
 
-app.use(multer({ storage: fileStorage }).single("ImagePath"));
-
-app.use(express.static(path.join(__dirname, "public")));
-
-app.use("/images", express.static(path.join(__dirname, "images")));
+app.use(multer({ storage: fileStorage }).single("img"));
 
 app.use(
   session({ secret: "anything", resave: true, saveUninitialized: false })
 );
 
+//? permite almacenar mensajes que deben ser mostrados 
+//? en la siguiente respuesta del servidor. Esto se utiliza
+//? comúnmente para mostrar mensajes de error o éxito después 
+//? de una acción realizada por el usuario.
+//! En este caso la usaremos para mostrar msj de error.
 app.use(flash());
 
+
+//? Guardar la persistencia del usuario, no solo los datos del mismo.
 app.use((req, res, next) => {
   if (!req.session) {
     return next();
@@ -66,7 +74,7 @@ app.use((req, res, next) => {
   if (!req.session.user) {
     return next();
   }
-  User.findByPk(req.session.user.id)
+  User.findByPk(req.session.user.Id)
     .then((user) => {
       req.user = user;
       next();
@@ -76,36 +84,44 @@ app.use((req, res, next) => {
     });
 });
 
+//? Con este middleware podemos tener estas propiedades disponibles en
+//? las vistas hbs
 app.use((req, res, next) => {
-  const errors = req.flash("errors");  
+  const errors = req.flash("errors");
   res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.errorMessages = errors;
   res.locals.hasErrorMessages = errors.length > 0;
   next();
 });
 
-// const heroesRouter = require("./routes/heroes");
-// const authRouter = require("./routes/auth");
-// const racesRouter = require("./routes/races");
+//? Mejor manejo de rutas
+const authRouter = require("./routes/auth");
+const candidatoRoute = require("./routes/candidatoRoute");
+const ciudadanoRoute = require("./routes/ciudadanoRoute");
+const eleccionesRoute = require("./routes/eleccionesRoute");
+const partidoRoute = require("./routes/partidoRoute");
+const puestoRoute = require("./routes/puestoRoute");
+const usuarioRouter = require("./routes/usuarioRouter");
 
-// app.use(heroesRouter);
-// app.use(authRouter);
-// app.use(racesRouter);
+app.use(candidatoRoute);
+app.use(authRouter);
+app.use(ciudadanoRoute);
+app.use(eleccionesRoute);
+app.use(partidoRoute);
+app.use(puestoRoute);
+app.use(usuarioRouter);
 
 app.use(errorController.Get404);
 
+//? Relaciones de las tablas
 Puesto.hasMany(Candidato);
 Candidato.belongsTo(Puesto);
-
 Partido.hasMany(Candidato);
 Candidato.belongsTo(Partido);
-
 Elecciones.belongsToMany(Puesto, { through: EleccionPuesto });
 Puesto.belongsToMany(Elecciones, { through: EleccionPuesto });
-
 Elecciones.belongsToMany(Ciudadano, { through: Votos });
 Ciudadano.belongsToMany(Elecciones, { through: Votos });
-
 
 sequelize
   .sync()
