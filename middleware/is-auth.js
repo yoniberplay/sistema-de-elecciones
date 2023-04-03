@@ -3,6 +3,5 @@ module.exports = (req, res, next) => {
     req.flash("errors", "You are not authorized to access this section");
     return res.redirect("/");
   }
-
   next();
 };

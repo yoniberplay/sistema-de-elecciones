@@ -8,6 +8,7 @@ const Partido = require("./models/Partido");
 const Puesto = require("./models/Puesto");
 const User = require("./models/User");
 const Ciudadano = require("./models/Ciudadano");
+const Ciudadano = require("./models/Ciudadano");
 const EleccionPuesto = require("./models/EleccionPuesto");
 const Votos = require("./models/Votos");
 const multer = require("multer");
@@ -58,30 +59,40 @@ app.use(
   session({ secret: "anything", resave: true, saveUninitialized: false })
 );
 
-//? permite almacenar mensajes que deben ser mostrados 
+//? permite almacenar mensajes que deben ser mostrados
 //? en la siguiente respuesta del servidor. Esto se utiliza
-//? comúnmente para mostrar mensajes de error o éxito después 
+//? comúnmente para mostrar mensajes de error o éxito después
 //? de una acción realizada por el usuario.
 //! En este caso la usaremos para mostrar msj de error.
 app.use(flash());
-
 
 //? Guardar la persistencia del usuario, no solo los datos del mismo.
 app.use((req, res, next) => {
   if (!req.session) {
     return next();
-  }
-  if (!req.session.user) {
+  } else if (req.session.user) {
+    User.findByPk(req.session.user.Id)
+      .then((user) => {
+        req.user = user;
+        next();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+      //! CREAR CONTROLADOR DE LOGGIN CIUDADANO Y AGREGAR LO QUE SE NECESITARIA AQUI
+  } else if (req.session.ciudadano) {
+    Ciudadano.findByPk(req.session.ciudadano.Id)
+      .then((ciudadano) => {
+        req.ciudadano = ciudadano;
+        next();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }else{
     return next();
   }
-  User.findByPk(req.session.user.Id)
-    .then((user) => {
-      req.user = user;
-      next();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  
 });
 
 //? Con este middleware podemos tener estas propiedades disponibles en
@@ -115,9 +126,9 @@ app.use(errorController.Get404);
 
 //? Relaciones de las tablas
 Puesto.hasMany(Candidato);
-Candidato.belongsTo(Puesto);
+Candidato.belongsTo(Puesto, { constraint: true, onDelete: "CASCADE" });
 Partido.hasMany(Candidato);
-Candidato.belongsTo(Partido);
+Candidato.belongsTo(Partido, { constraint: true, onDelete: "CASCADE" });
 Elecciones.belongsToMany(Puesto, { through: EleccionPuesto });
 Puesto.belongsToMany(Elecciones, { through: EleccionPuesto });
 Elecciones.belongsToMany(Ciudadano, { through: Votos });
