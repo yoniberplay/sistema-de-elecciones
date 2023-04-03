@@ -112,6 +112,7 @@ const eleccionesRoute = require("./routes/eleccionesRoute");
 const partidoRoute = require("./routes/partidoRoute");
 const puestoRoute = require("./routes/puestoRoute");
 const usuarioRouter = require("./routes/usuarioRouter");
+const votacionRouter = require('./routes/votacionRouter')
 
 app.use(authRouter);
 app.use(candidatoRoute);
@@ -120,6 +121,7 @@ app.use(eleccionesRoute);
 app.use(partidoRoute);
 app.use(puestoRoute);
 app.use(usuarioRouter);
+app.use(votacionRouter);
 
 app.use(errorController.Get404);
 
