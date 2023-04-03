@@ -8,7 +8,6 @@ const Partido = require("./models/Partido");
 const Puesto = require("./models/Puesto");
 const User = require("./models/User");
 const Ciudadano = require("./models/Ciudadano");
-const Ciudadano = require("./models/Ciudadano");
 const EleccionPuesto = require("./models/EleccionPuesto");
 const Votos = require("./models/Votos");
 const multer = require("multer");
@@ -114,8 +113,8 @@ const partidoRoute = require("./routes/partidoRoute");
 const puestoRoute = require("./routes/puestoRoute");
 const usuarioRouter = require("./routes/usuarioRouter");
 
-app.use(candidatoRoute);
 app.use(authRouter);
+app.use(candidatoRoute);
 app.use(ciudadanoRoute);
 app.use(eleccionesRoute);
 app.use(partidoRoute);

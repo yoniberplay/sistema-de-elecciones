@@ -1,5 +1,52 @@
 const User = require("../models/User");
+const Ciudadano = require("../models/Ciudadano");
+const Elecciones = require("../models/Elecciones");
 const bcrypt = require("bcryptjs");
+
+exports.GetLoginCiudadano = (req, res, next) => {
+  res.render("auth/loginCiudadano", {
+    pageTitle: "Sistema de Elecciones",
+  });
+};
+
+exports.PostLoginCiudadano = (req, res, next) => {
+  const cedula = req.body.cedula;
+
+  Ciudadano.findOne({ where: { IdDoc: cedula } })
+  .then((ciudadano) => {
+    if (!ciudadano) {
+      req.flash("errors", "No existe ningun ciudadano con ese numero de cedula.");
+      return res.redirect("/");
+    }
+    if(!ciudadano.status){
+      req.flash("errors", "El ciudadano ingresado no esta activo.");
+      return res.redirect("/");
+    }
+    let eleccion;
+    Elecciones.findOne({ where: { status: true }} ).then((elecciones)=>{
+      if (!eleccion) {
+        req.flash("errors", "No hay ninguna eleccion activa.");
+        return res.redirect("/");
+      }
+    eleccion = elecciones;
+    req.session.eleccion = elecciones;
+    });
+    req.session.isLoggedIn = true;
+    req.session.ciudadano = ciudadano;
+    return req.session.save((err) => {
+      //! Verififcar en que ruta se queda creo que en /login-ciudadano
+      res.render("ciudadano/votacion", {
+        pageTitle: "Sistema de Elecciones",
+        ciudadano: ciudadano,
+        eleccion: eleccion,
+      });
+    })      
+  }).catch((err) => {
+    console.log(err);
+    req.flash("errors", "Ha ocurrido un erro contacte a su administrador.");
+    res.redirect("/");
+  });
+};
 
 exports.GetLogin = (req, res, next) => {
 
