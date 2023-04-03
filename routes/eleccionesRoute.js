@@ -10,4 +10,4 @@ router.post("/edit-eleccion", EleccionesController.PostEditEleccion);
 router.post("/delete-eleccion", EleccionesController.PostDeleteElecciones);
 router.post("/confirm-delete-eleccion", EleccionesController.PostConfirmDeleteEleccion);
 
-module.exports = router;image.png
+module.exports = router;

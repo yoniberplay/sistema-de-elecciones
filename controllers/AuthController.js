@@ -26,10 +26,11 @@ exports.PostLoginCiudadano = (req, res, next) => {
     Elecciones.findOne({ where: { status: true }} ).then((elecciones)=>{
       if (!eleccion) {
         req.flash("errors", "No hay ninguna eleccion activa.");
-        return res.redirect("/");
+        return res.redirect("/votacion");
       }
-    eleccion = elecciones;
-    req.session.eleccion = elecciones;
+
+      eleccion = elecciones;
+      req.session.eleccion = elecciones;
     });
     req.session.isLoggedIn = true;
     req.session.ciudadano = ciudadano;
