@@ -1,12 +1,22 @@
-exports.getVotacionPage = (req, res) => {
 
+exports.getPage = (req, res) => {
+    res.render('ciudadano/votacion', {
+        pageTitle: 'Votacion',
+    })
+}
+
+exports.getVotacionPage = (req, res, next) => {
+    
     if (!req.session.eleccion) {
         req.flash("errors", "No hay ninguna eleccion activa.");
+    } else {
+        req.flash("success", "Hay una eleccion activa.");
     }
-    console.log(req.session.eleccion)
-    res.render('ciudadano/votacion', {
+    
+    
+     res.status(200).render('ciudadano/votacion', {
         pageTitle: 'Votacion',
         ciudadano: req.ciudadano.dataValues,
         eleccion: req.session.eleccion, 
-           })
+    })
 }

@@ -9,11 +9,12 @@ exports.GetLoginCiudadano = (req, res, next) => {
   });
 };
 
-exports.PostLoginCiudadano = (req, res, next) => {
+exports.PostLoginCiudadano = async (req, res, next) => {
   const cedula = req.body.cedula;
+  
+  try{
+    const ciudadano = await Ciudadano.findOne({raw: true, where: { IdDoc: cedula } });
 
-  Ciudadano.findOne({ where: { IdDoc: cedula } })
-  .then((ciudadano) => {
     if (!ciudadano) {
       req.flash("errors", "No existe ningun ciudadano con ese numero de cedula.");
       return res.redirect("/");
@@ -22,25 +23,32 @@ exports.PostLoginCiudadano = (req, res, next) => {
       req.flash("errors", "El ciudadano ingresado no esta activo.");
       return res.redirect("/");
     }
-    let eleccion;
-    Elecciones.findOne({ where: { status: true }} ).then((elecciones)=>{
-      if (!elecciones) {       
-        req.flash("errors", "No hay ninguna eleccion activa.");
-        return res.redirect("/votacion");
-      }
-      eleccion = elecciones;
-      console.log(elecciones.dataValues)
-      req.session.eleccion = elecciones;
-    });
+
+    const EleccionActiva =  await Elecciones.findOne({raw: true, where: { status: true }} )
+    
+    if (!EleccionActiva) {       
+      req.flash("errors", "No hay ninguna eleccion activa.");
+      return res.redirect("/votacion");
+    }
+
+    //! ~!~~~Apa;amiento
+    req.flash("success", "Hay una eleccion activa.");
+    req.session.isLoggedIn = true;
+
+    req.session.eleccion = EleccionActiva;
     req.session.ciudadano = ciudadano;
+
     return req.session.save((err) => {
+    
       return res.redirect("/votacion");
     })      
-  }).catch((err) => {
+
+  } catch (err) {
     console.log(err);
     req.flash("errors", "Ha ocurrido un erro contacte a su administrador.");
     res.redirect("/");
-  });
+  }
+ 
 };
 
 exports.GetLogin = (req, res, next) => {

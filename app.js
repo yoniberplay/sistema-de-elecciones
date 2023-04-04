@@ -15,6 +15,17 @@ const { v4: uuidv4 } = require("uuid");
 const session = require("express-session");
 const flash = require("connect-flash");
 
+//? Mejor manejo de rutas
+const authRouter = require("./routes/auth");
+const candidatoRoute = require("./routes/candidatoRoute");
+const ciudadanoRoute = require("./routes/ciudadanoRoute");
+const eleccionesRoute = require("./routes/eleccionesRoute");
+const partidoRoute = require("./routes/partidoRoute");
+const puestoRoute = require("./routes/puestoRoute");
+const usuarioRouter = require("./routes/usuarioRouter");
+const votacionRouter = require('./routes/votacionRouter')
+
+
 const errorController = require("./controllers/ErrorController");
 
 const app = express();
@@ -73,6 +84,7 @@ app.use((req, res, next) => {
     User.findByPk(req.session.user.Id)
       .then((user) => {
         req.user = user;
+
         next();
       })
       .catch((err) => {
@@ -84,7 +96,8 @@ app.use((req, res, next) => {
       .then((ciudadano) => {
         req.ciudadano = ciudadano;
         //! agregar la persistencia de eleccion que viene en la session
-        // console.log(ciudadano.dataValues);        
+        // console.log(ciudadano.dataValues);   
+
         next();
       })
       .catch((err) => {
@@ -96,25 +109,24 @@ app.use((req, res, next) => {
   
 });
 
+
+
 //? Con este middleware podemos tener estas propiedades disponibles en
 //? las vistas hbs
 app.use((req, res, next) => {
   const errors = req.flash("errors");
+  const success = req.flash("success");
+  
   res.locals.isAuthenticated = req.session.isLoggedIn;
+  
   res.locals.errorMessages = errors;
   res.locals.hasErrorMessages = errors.length > 0;
+
+  res.locals.successMessages = success;
+  res.locals.hasSuccessMessages = success.length > 0;
+
   next();
 });
-
-//? Mejor manejo de rutas
-const authRouter = require("./routes/auth");
-const candidatoRoute = require("./routes/candidatoRoute");
-const ciudadanoRoute = require("./routes/ciudadanoRoute");
-const eleccionesRoute = require("./routes/eleccionesRoute");
-const partidoRoute = require("./routes/partidoRoute");
-const puestoRoute = require("./routes/puestoRoute");
-const usuarioRouter = require("./routes/usuarioRouter");
-const votacionRouter = require('./routes/votacionRouter')
 
 app.use(authRouter);
 app.use(candidatoRoute);
@@ -126,6 +138,8 @@ app.use(usuarioRouter);
 app.use(votacionRouter);
 
 app.use(errorController.Get404);
+
+
 
 //? Relaciones de las tablas
 Puesto.hasMany(Candidato);
