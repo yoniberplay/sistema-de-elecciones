@@ -1,4 +1,5 @@
 const Puesto = require("../models/Puesto");
+const Eleccion = require("../models/Elecciones");
 
 exports.GetPuestoList = (req, res, next) => {
   
@@ -21,6 +22,15 @@ exports.GetPuestoList = (req, res, next) => {
 };
 
 exports.GetCreatePuesto = (req, res, next) => {
+
+  const EleccionActiva = Eleccion.findOne({raw: true, where: {status: true}})
+  
+  //? No se puede crear si no hay una eleccion activa
+  if (!EleccionActiva) {
+    req.flash("errors", "No se puede crear puestos ya que no hay una eleccion activa en el sistema");
+    return res.redirect("/user")
+  }
+
   res.render("puesto/save-puesto", {
     pageTitle: "Create Puesto",
     puestoActive: true,
@@ -92,6 +102,14 @@ exports.PostEditPuesto = (req, res, next) => {
 
 exports.PostConfirmDeletePuesto = (req, res, next) => {
   const puestoId = req.body.puestoId;
+
+  const EleccionActiva = Eleccion.findOne({raw: true, where: {status: true}})
+  
+  //? No se puede eliminar si hay una eleccion
+  if (EleccionActiva) {
+    req.flash("errors", "No se puede eliminar el Puesto ya que hay una eleccion activa en el sistema");
+    return res.redirect("/user")
+  }
 
   Puesto.findOne({ where: { Id: puestoId } })
     .then((result) => {

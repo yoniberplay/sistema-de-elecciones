@@ -1,4 +1,5 @@
 const Partido = require("../models/Partido");
+const Eleccion = require("../models/Elecciones");
 
 exports.GetPartidoList = (req, res, next) => {
   Partido.findAll()
@@ -102,6 +103,14 @@ exports.PostEditPartido = (req, res, next) => {
 
 exports.PostConfirmDeletePartido = (req, res, next) => {
   const partidoId = req.body.partidoId;
+
+  const EleccionActiva = Eleccion.findOne({raw: true, where: {status: true}})
+  
+  //? No se puede eliminar si hay una eleccion
+  if (EleccionActiva) {
+    req.flash("errors", "No se puede eliminar el Partido ya que hay una eleccion activa en el sistema");
+    return res.redirect("/user")
+  }
 
   Partido.findOne({ where: { Id: partidoId } })
     .then((result) => {

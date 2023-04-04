@@ -1,4 +1,7 @@
 const Candidato = require("../models/Candidato");
+const Partido = require("../models/Partido");
+const Puesto = require("../models/Puesto")
+const Eleccion = require("../models/Elecciones")
 
 exports.GetCandidatoList = (req, res, next) => {
   Candidato.findAll()
@@ -19,12 +22,42 @@ exports.GetCandidatoList = (req, res, next) => {
     });
 };
 
-exports.GetCreateCandidato = (req, res, next) => {
-  res.render("candidato/save-candidato", {
-    pageTitle: "Create candidato",
-    candidatoActive: true,
-    editMode: false,
-  });
+const validationsBeforeCreate = async (req, res, next) => {
+
+  const PartidoActivo = await Partido.findOne({raw: true, where: {status: true}});
+  
+  if (!PartidoActivo) {
+    return {status: false, message: "Debe existing al menos 1 partido creado en el sistema"};
+  }
+  
+  const PuestoActivo = await Puesto.findOne({raw: true, where: {status: true}});
+
+  if (!PuestoActivo) {
+    return {status: false, message: "Debe existing al menos 1 puesto activo  en el sistema"};
+
+  }
+
+  return true;
+
+}
+
+exports.GetCreateCandidato = async (req, res, next) => {
+
+  const isValid = await validationsBeforeCreate();
+
+  if (isValid.status) {
+    res.render("candidato/save-candidato", {
+      pageTitle: "Create candidato",
+      candidatoActive: true,
+      editMode: false,
+    });
+  } else {
+
+    req.flash("erros", isValid.message)
+
+    return res.redirect("/user");
+  }
+ 
 };
 
 exports.PostCreateCandidato = (req, res, next) => {
@@ -125,6 +158,14 @@ exports.PostEditCandidato = (req, res, next) => {
 
 exports.PostConfirmDeleteCandidato = (req, res, next) => {
   const candidatoId = req.body.candidatoId;
+
+  const EleccionActiva = Eleccion.findOne({raw: true, where: {status: true}})
+  
+  //? No se puede eliminar si hay una eleccion
+  if (EleccionActiva) {
+    req.flash("errors", "No se puede eliminar el candidato ya que hay una eleccion activa en el sistema");
+    return res.redirect("/user")
+  }
 
   Candidato.findOne({ where: { Id: candidatoId } })
     .then((result) => {
