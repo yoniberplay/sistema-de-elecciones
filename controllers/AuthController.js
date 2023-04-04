@@ -24,23 +24,17 @@ exports.PostLoginCiudadano = (req, res, next) => {
     }
     let eleccion;
     Elecciones.findOne({ where: { status: true }} ).then((elecciones)=>{
-      if (!eleccion) {
+      if (!elecciones) {       
         req.flash("errors", "No hay ninguna eleccion activa.");
         return res.redirect("/votacion");
       }
-
       eleccion = elecciones;
+      console.log(elecciones.dataValues)
       req.session.eleccion = elecciones;
     });
-    req.session.isLoggedIn = true;
     req.session.ciudadano = ciudadano;
     return req.session.save((err) => {
-      //! Verififcar en que ruta se queda creo que en /login-ciudadano
-      res.render("ciudadano/votacion", {
-        pageTitle: "Sistema de Elecciones",
-        ciudadano: ciudadano,
-        eleccion: eleccion,
-      });
+      return res.redirect("/votacion");
     })      
   }).catch((err) => {
     console.log(err);

@@ -20,7 +20,10 @@ const Votos = sequelize.define("Votos", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  
+  PuestoId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 });
 
 module.exports = Votos;

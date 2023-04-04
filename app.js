@@ -83,6 +83,8 @@ app.use((req, res, next) => {
     Ciudadano.findByPk(req.session.ciudadano.Id)
       .then((ciudadano) => {
         req.ciudadano = ciudadano;
+        //! agregar la persistencia de eleccion que viene en la session
+        // console.log(ciudadano.dataValues);        
         next();
       })
       .catch((err) => {
