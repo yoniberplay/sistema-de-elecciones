@@ -28,7 +28,7 @@ exports.PostLoginCiudadano = async (req, res, next) => {
     
     if (!EleccionActiva) {       
       req.flash("errors", "No hay ninguna eleccion activa.");
-      return res.redirect("/votacion");
+      return res.redirect("/");
     }
 
     //! ~!~~~Apa;amiento
@@ -102,9 +102,13 @@ exports.PostLogin = (req, res, next) => {
 };
 
 exports.Logout = (req, res, next) => {
+  console.log(req.session.eleccion);
   req.session.destroy((err) => {
-    console.log(err);
-    res.redirect("/");
+    if(err) {
+      console.log(err);
+    } else {
+      res.redirect('/');
+    }
   });
 };
 
