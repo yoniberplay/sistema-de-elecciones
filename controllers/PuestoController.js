@@ -22,6 +22,15 @@ exports.GetPuestoList = (req, res, next) => {
 };
 
 exports.GetCreatePuesto = (req, res, next) => {
+
+  const EleccionActiva = Eleccion.findOne({raw: true, where: {status: true}})
+  
+  //? No se puede crear si no hay una eleccion activa
+  if (!EleccionActiva) {
+    req.flash("errors", "No se puede crear puestos ya que no hay una eleccion activa en el sistema");
+    return res.redirect("/user")
+  }
+
   res.render("puesto/save-puesto", {
     pageTitle: "Create Puesto",
     puestoActive: true,
