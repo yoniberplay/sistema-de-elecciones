@@ -1,4 +1,5 @@
 const Puesto = require("../models/Puesto");
+const Eleccion = require("../models/Elecciones");
 
 exports.GetPuestoList = (req, res, next) => {
   
@@ -92,6 +93,14 @@ exports.PostEditPuesto = (req, res, next) => {
 
 exports.PostConfirmDeletePuesto = (req, res, next) => {
   const puestoId = req.body.puestoId;
+
+  const EleccionActiva = Eleccion.findOne({raw: true, where: {status: true}})
+  
+  //? No se puede eliminar si hay una eleccion
+  if (EleccionActiva) {
+    req.flash("errors", "No se puede eliminar el Puesto ya que hay una eleccion activa en el sistema");
+    return res.redirect("/user")
+  }
 
   Puesto.findOne({ where: { Id: puestoId } })
     .then((result) => {
