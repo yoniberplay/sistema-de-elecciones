@@ -1,6 +1,6 @@
 module.exports = (req, res, next) => {
-  if (!req.session.isLoggedIn) {
-    req.flash("errors", "You are not authorized to access this section");
+  if (!req.session.user) {
+    req.flash("errors", "Usuario no autorizado.");
     return res.redirect("/");
   }
   next();

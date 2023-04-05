@@ -118,6 +118,7 @@ app.use((req, res, next) => {
   const success = req.flash("success");
   
   res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.isCiudadano = req.session.ciudadano ? true : false;
   
   res.locals.errorMessages = errors;
   res.locals.hasErrorMessages = errors.length > 0;
