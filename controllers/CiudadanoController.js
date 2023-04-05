@@ -60,7 +60,7 @@ exports.GetEditCiudadano = (req, res, next) => {
     return res.redirect("/ciudadano");
   }
 
-  Ciudadano.findOne({ where: { id: ciudadanoId } })
+  Ciudadano.findOne({ where: { Id: ciudadanoId } })
     .then((result) => {
       const pue = result.dataValues;
       if (!pue) {
@@ -87,6 +87,7 @@ exports.PostEditCiudadano = (req, res, next) => {
   const lastName = req.body.lastName;
   const email = req.body.email;
   const ciudadanoId = req.body.ciudadanoId;
+  
 
   Ciudadano.update(
     { 

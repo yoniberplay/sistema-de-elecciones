@@ -62,7 +62,7 @@ exports.GetEditUser = (req, res, next) => {
     return res.redirect("/user");
   }
 
-  User.findOne({ where: { id: userId } })
+  User.findOne({ where: { Id: userId } })
     .then((result) => {
       const pue = result.dataValues;
       if (!pue) {

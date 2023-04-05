@@ -13,7 +13,7 @@ const Elecciones = sequelize.define("Elecciones", {
     allowNull: false,
   },
   fechaRealizacion: {
-    type: DataTypes.TIME,
+    type: DataTypes.DATEONLY,
     allowNull: false,
 },
   status:  {

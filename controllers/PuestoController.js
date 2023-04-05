@@ -52,7 +52,7 @@ exports.GetEditPuesto = (req, res, next) => {
     return res.redirect("/puesto");
   }
 
-  Puesto.findOne({ where: { id: puestoId } })
+  Puesto.findOne({ where: { Id: puestoId } })
     .then((result) => {
       const pue = result.dataValues;
       if (!pue) {

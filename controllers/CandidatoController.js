@@ -1,15 +1,30 @@
 const Candidato = require("../models/Candidato");
+const Partido = require("../models/Partido");
+const Puesto = require("../models/Puesto");
 
 exports.GetCandidatoList = (req, res, next) => {
-  Candidato.findAll()
+  Candidato.findAll({include: [{ model: Partido }, { model: Puesto }]})
     .then((result) => {
       let candidato = result.map((result) => result.dataValues);
-      res.render("candidato/candidato-list", {
-        pageTitle: "candidato",
-        candidatoActive: true,
-        candidato: candidato,
-        hasCandidato: candidato.length > 0,
-      });
+
+      Partido.findAll()
+        .then((result) => {
+          let partido = result.map((result) => result.dataValues);
+
+          Puesto.findAll()
+          .then((result) => {   
+            let puestos = result.map((result) => result.dataValues);
+
+            res.render("candidato/candidato-list", {
+              pageTitle: "candidato",
+              candidatoActive: true,
+              candidato: candidato,
+              partido: partido,
+              puestos: puestos,
+              hasCandidato: candidato.length > 0,
+            });
+          });
+        });
     })
     .catch((err) => {
       res.render("Error/ErrorInterno", {
@@ -20,11 +35,40 @@ exports.GetCandidatoList = (req, res, next) => {
 };
 
 exports.GetCreateCandidato = (req, res, next) => {
-  res.render("candidato/save-candidato", {
-    pageTitle: "Create candidato",
-    candidatoActive: true,
-    editMode: false,
-  });
+  Partido.findAll()
+    .then((result) => {
+
+      const partido = result.map((result) => result.dataValues);
+
+      Puesto.findAll()
+        .then((result) => {
+          const puestos = result.map((result) => result.dataValues);
+
+          res.render("candidato/save-candidato", {
+            pageTitle: "Create candidato",
+            candidatoActive: true,
+            editMode: false,
+            partido: partido,
+            puestos: puestos,
+            hasPuestos: puestos.length > 0,
+            hasPartido: partido.length > 0,
+        });
+        
+        })
+        .catch((err) => {
+          res.render("Error/ErrorInterno", {
+            pageTitle: "Error Interno",
+            mensaje: err,
+          });
+        });
+        
+      })
+      .catch((err) => {
+        res.render("Error/ErrorInterno", {
+          pageTitle: "Error Interno",
+          mensaje: err,
+        });
+      });
 };
 
 exports.PostCreateCandidato = (req, res, next) => {
@@ -62,17 +106,33 @@ exports.GetEditCandidato = (req, res, next) => {
     return res.redirect("/candidato");
   }
 
-  Candidato.findOne({ where: { id: candidatoId } })
+  Candidato.findOne({ where: { Id: candidatoId } })
     .then((result) => {
-      const pue = result.dataValues;
-      if (!pue) {
+      const candidato = result.dataValues;
+
+      if (!candidato) {
         return res.redirect("/candidato");
       }
-      res.render("candidato/save-candidato", {
-        pageTitle: "Edit candidato",
-        candidatoActive: true,
-        editMode: edit,
-        candidato: pue,
+      Partido.findAll()
+        .then((result) => {
+          let partido = result.map((result) => result.dataValues);
+
+          Puesto.findAll()
+            .then((result) => {   
+              let puestos = result.map((result) => result.dataValues);
+
+                res.render("candidato/save-candidato", {
+                  pageTitle: "Edit candidato",
+                  candidatoActive: true,
+                  editMode: edit,
+                  candidato: candidato,
+                  partido: partido,
+                  puestos: puestos,
+                  hasCandidato: candidato.length > 0,
+                  hasPuestos: puestos.length > 0,
+                  hasPartido: partido.length > 0,
+                });
+          });
       });
     })
     .catch((err) => {
@@ -84,16 +144,18 @@ exports.GetEditCandidato = (req, res, next) => {
 };
 
 exports.PostEditCandidato = (req, res, next) => {
-  const candidatoId = req.candidatoId;
+  const candidatoId = req.body.candidatoId;
   const name = req.body.name;
   const lastName = req.body.lastName;
   const PartidoId = req.body.PartidoId;
   const PuestoId = req.body.PuestoId;
   const imgPerfil = req.file;
 
-  Candidato.findOne({ where: { id: candidatoId } })
+  Candidato.findOne({ where: { Id: candidatoId } })
     .then((result) => {
+
       const bk = result.dataValues;
+      
       if (!bk) {
         return res.redirect("/");
       }
