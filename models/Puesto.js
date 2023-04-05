@@ -20,6 +20,10 @@ const Puesto = sequelize.define("Puesto", {
     type: DataTypes.BOOLEAN,
     allowNull: false,
   },
+  eleccionId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  }
 });
 
 module.exports = Puesto;

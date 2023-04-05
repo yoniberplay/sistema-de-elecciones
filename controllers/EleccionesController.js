@@ -140,56 +140,71 @@ exports.PostDeleteElecciones = (req, res, next) => {
     });
 };
 
-exports.GetResultadosElecciones = async (req, res, next) => {
-  //? En la opción de Elecciones, se muestra un listado con las elecciones realizado, en
-  //? este listado debe existir una opcion que me permita ver los resultados de esa
-  //? elección( se debe mostrar los puestos que se disputaron, los candidatos para cada
-  //? puesto, la cantidad de votos que recibieron y el porcentaje que sacaron organizado
-  //? del más alto el ganador hasta el más bajo).
-  
-  //Todo: En ese listado debe mostrar cual es la elección que está activa y sobre la elección
-  //Todo: activa solo debe mostrar la opción de finalizar, una vez pulsado sobre finalizar
-  //Todo: ningún elector podrá seguir votando sobre la misma y se podrá acceder a la opción
-  //Todo: de resultados para ver los ganadores de los comicios.
-
+exports.GetResultadosElecciones =  async (req, res, next) => {
   const eleccionId = req.params.eleccionId;
-  
+
+
   if (!eleccionId) {
     return res.redirect("/user");
   }
 
+  const eleccion = await Elecciones.findByPk(eleccionId, {raw: true})
+
+  const eleccionInfo = await eleccionPuestosInfo(eleccionId)
+  // res.json({
+  //   eleccionInfo
+  // })
+  res.status(200).render("eleccion_resultado/resultado", {
+    puestos: eleccionInfo,
+    hasPuestos: eleccionPuestosInfo.length > 0,
+    eleccion
+  })
+
+}
+
+async function eleccionPuestosInfo  (eleccionId) {
+ 
   const Votos = await Voto.findAll({
     raw: true,
     where: { EleccioneId: eleccionId },
-    include: [{model: Elecciones}, {model: Candidato}, {model: Puesto}]
+    include: [
+      {model: Elecciones}, 
+      {model: Candidato}, 
+      {model: Puesto}]
   });
 
-  const candidatosEleccion = Votos.map(p => {
+  const Candidatos = await Candidato.findAll({raw: true})
+
+  const Puestos = await Puesto.findAll({raw: true, where: {eleccionId}})
+
+  const Partidos = await Partido.findAll({raw: true})
+
+  const candidatosEleccion =  Candidatos.map( p => {
     const candidato = {
-      id: p['Candidato.Id'],
-      name: p['Candidato.name'],
-      lastName: p['Candidato.lastName'],
-      puestoId: p['Candidato.PuestoId'],
-      img: p['Candidato.imgPerfil'],
-      partidoId: p['Candidato.PartidoId'],
+      id: p.Id,
+      name: p.name,
+      lastName: p.lastName,
+      puestoId: p.PuestoId,
+      img: p.imgPerfil,
+      partidoId: p.PartidoId,
     }
     candidato.votos = Votos.filter(v => v['Candidato.Id'] === candidato.id).length;
+    candidato.partido = Partidos.filter(v => v.Id === candidato.partidoId);
+    candidato.porcentaje = Math.round((candidato.votos / Votos.length) * 100)
     return candidato
   })
 
-  const eleccionPuestos = Votos.map(p => {
-    const id = p['Puesto.Id']
+  const eleccionPuestos = Puestos.map(p => {
+    const id = p.Id
     const candidatos = candidatosEleccion.filter(f => f.puestoId === id)
     candidatos.sort((a, b) => b.votos - a.votos)
+
     return {
       id: id,
-      name: p['Puesto.name'],
+      name: p.name,
       candidatos
     }
   })
 
-  return res.status(200).json({
-    eleccionPuestos,
-    ok: true
-  })
+  return eleccionPuestos
 };

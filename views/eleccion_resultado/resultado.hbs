@@ -1,0 +1,52 @@
+<section class="py-5 text-center container">
+  <div class="row py-lg-5">
+    <div class="col-lg-6 col-md-8 mx-auto">
+      <h1 class="text-white fw-bold">Resultado de eleccion <span class="text-warning">{{eleccion.name}}</span></h1>
+
+    </div>
+  </div>
+</section>
+
+<div class="album py-5 bg-light">
+  <div class="container">
+    <h2>Puestos disputados</h2>
+    <div class="row">
+
+      {{#if hasPuestos}}
+
+      {{#each puestos as |puesto|}}
+
+      <div class="card col-md-5">
+        <div class="card-body">
+          <h5 class="card-title">{{puesto.name}}</h5>
+          {{#each puesto.candidatos as |pC|}}
+          <div>
+            <img class="img-fluid" style="width: 50px;" src="{{pC.img}}"></img>
+            
+            <div class="d-flex ">
+              <p class="">Candidato: <span class="btn btn-primary">{{pC.name}}</span></p>
+              <p class="ms-3">Votos: <span class="btn btn-primary"> {{pC.votos}} -- {{pC.porcentaje}}%</span></p>
+              
+
+              {{#each pC.partido as |pa| }}
+                <p class="ms-3">Partido: <span class="btn btn-primary"> {{pa.name}}</span></p>
+              {{/each}}
+            </div>
+
+          </div>
+          {{/each}}
+
+        </div>
+      </div>
+
+      {{/each}}
+
+      {{else}}
+
+      <h1>No hay Puestos creados en esta eleccion</h1>
+
+      {{/if}}
+
+    </div>
+  </div>
+</div>
