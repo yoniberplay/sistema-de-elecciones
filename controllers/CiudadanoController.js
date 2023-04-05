@@ -1,4 +1,5 @@
 const Ciudadano = require("../models/Ciudadano");
+const Eleccion = require("../models/Elecciones");
 
 exports.GetCiudadanoList = (req, res, next) => {
   Ciudadano.findAll()
@@ -111,6 +112,15 @@ exports.PostEditCiudadano = (req, res, next) => {
 
 exports.PostConfirmDeleteCiudadano = (req, res, next) => {
   const ciudadanoId = req.body.ciudadanoId;
+
+  const EleccionActiva = Eleccion.findOne({raw: true, where: {status: true}})
+  
+  //? No se puede eliminar si hay una eleccion
+  if (EleccionActiva) {
+    req.flash("errors", "No se puede eliminar el Ciudadano ya que hay una eleccion activa en el sistema");
+    return res.redirect("/user")
+  }
+
 
   Ciudadano.findOne({ where: { Id: ciudadanoId } })
     .then((result) => {

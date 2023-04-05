@@ -15,6 +15,17 @@ const { v4: uuidv4 } = require("uuid");
 const session = require("express-session");
 const flash = require("connect-flash");
 
+//? Mejor manejo de rutas
+const authRouter = require("./routes/auth");
+const candidatoRoute = require("./routes/candidatoRoute");
+const ciudadanoRoute = require("./routes/ciudadanoRoute");
+const eleccionesRoute = require("./routes/eleccionesRoute");
+const partidoRoute = require("./routes/partidoRoute");
+const puestoRoute = require("./routes/puestoRoute");
+const usuarioRouter = require("./routes/usuarioRouter");
+const votacionRouter = require('./routes/votacionRouter')
+
+
 const errorController = require("./controllers/ErrorController");
 
 const app = express();
@@ -58,70 +69,93 @@ app.use(
   session({ secret: "anything", resave: true, saveUninitialized: false })
 );
 
-//? permite almacenar mensajes que deben ser mostrados 
+//? permite almacenar mensajes que deben ser mostrados
 //? en la siguiente respuesta del servidor. Esto se utiliza
-//? comúnmente para mostrar mensajes de error o éxito después 
+//? comúnmente para mostrar mensajes de error o éxito después
 //? de una acción realizada por el usuario.
 //! En este caso la usaremos para mostrar msj de error.
 app.use(flash());
-
 
 //? Guardar la persistencia del usuario, no solo los datos del mismo.
 app.use((req, res, next) => {
   if (!req.session) {
     return next();
-  }
-  if (!req.session.user) {
+  } else if (req.session.user) {
+    User.findByPk(req.session.user.Id)
+      .then((user) => {
+        req.user = user;
+
+        next();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+      //! CREAR CONTROLADOR DE LOGGIN CIUDADANO Y AGREGAR LO QUE SE NECESITARIA AQUI
+  } else if (req.session.ciudadano) {
+    Ciudadano.findByPk(req.session.ciudadano.Id)
+      .then((ciudadano) => {
+        req.ciudadano = ciudadano;
+        //! agregar la persistencia de eleccion que viene en la session
+        // console.log(ciudadano.dataValues);   
+
+        next();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }else{
     return next();
   }
-  User.findByPk(req.session.user.Id)
-    .then((user) => {
-      req.user = user;
-      next();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  
 });
+
+
 
 //? Con este middleware podemos tener estas propiedades disponibles en
 //? las vistas hbs
 app.use((req, res, next) => {
   const errors = req.flash("errors");
+  const success = req.flash("success");
+  
   res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.isCiudadano = req.session.ciudadano ? true : false;
+  
   res.locals.errorMessages = errors;
   res.locals.hasErrorMessages = errors.length > 0;
+
+  res.locals.successMessages = success;
+  res.locals.hasSuccessMessages = success.length > 0;
+
   next();
 });
 
-//? Mejor manejo de rutas
-const authRouter = require("./routes/auth");
-const candidatoRoute = require("./routes/candidatoRoute");
-const ciudadanoRoute = require("./routes/ciudadanoRoute");
-const eleccionesRoute = require("./routes/eleccionesRoute");
-const partidoRoute = require("./routes/partidoRoute");
-const puestoRoute = require("./routes/puestoRoute");
-const usuarioRouter = require("./routes/usuarioRouter");
-
-app.use(candidatoRoute);
 app.use(authRouter);
+app.use(candidatoRoute);
 app.use(ciudadanoRoute);
 app.use(eleccionesRoute);
 app.use(partidoRoute);
 app.use(puestoRoute);
 app.use(usuarioRouter);
+app.use(votacionRouter);
 
 app.use(errorController.Get404);
 
+
+
 //? Relaciones de las tablas
 Puesto.hasMany(Candidato);
-Candidato.belongsTo(Puesto);
+Candidato.belongsTo(Puesto, { constraint: true, onDelete: "CASCADE" });
 Partido.hasMany(Candidato);
-Candidato.belongsTo(Partido);
+Candidato.belongsTo(Partido, { constraint: true, onDelete: "CASCADE" });
 Elecciones.belongsToMany(Puesto, { through: EleccionPuesto });
 Puesto.belongsToMany(Elecciones, { through: EleccionPuesto });
 Elecciones.belongsToMany(Ciudadano, { through: Votos });
 Ciudadano.belongsToMany(Elecciones, { through: Votos });
+
+Votos.belongsTo(Candidato);
+Votos.belongsTo(Elecciones);
+Votos.belongsTo(Ciudadano);
+Votos.belongsTo(Puesto);
 
 sequelize
   .sync()

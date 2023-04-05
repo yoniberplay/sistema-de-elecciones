@@ -1,7 +1,12 @@
 const Elecciones = require("../models/Elecciones");
+const Voto = require("../models/Votos");
+
+const Candidato = require("../models/Candidato");
+const Partido = require("../models/Partido");
+const Puesto = require("../models/Puesto");
 
 exports.GetEleccionesList = (req, res, next) => {
-    Elecciones.findAll()
+  Elecciones.findAll()
     .then((result) => {
       let eleccion = result.map((result) => result.dataValues);
       res.render("eleccion/eleccion-list", {
@@ -78,12 +83,12 @@ exports.GetEditEleccion = (req, res, next) => {
 };
 
 exports.PostEditEleccion = (req, res, next) => {
-    const name = req.body.name;
-    const fechaRealizacion = req.body.fechaRealizacion;
-    const eleccionId = req.body.eleccionId;
+  const name = req.body.name;
+  const fechaRealizacion = req.body.fechaRealizacion;
+  const eleccionId = req.body.eleccionId;
 
   Elecciones.update(
-    { name: name, fechaRealizacion: fechaRealizacion, },
+    { name: name, fechaRealizacion: fechaRealizacion },
     { where: { Id: eleccionId } }
   )
     .then((result) => {
@@ -133,4 +138,58 @@ exports.PostDeleteElecciones = (req, res, next) => {
         mensaje: err,
       });
     });
+};
+
+exports.GetResultadosElecciones = async (req, res, next) => {
+  //? En la opción de Elecciones, se muestra un listado con las elecciones realizado, en
+  //? este listado debe existir una opcion que me permita ver los resultados de esa
+  //? elección( se debe mostrar los puestos que se disputaron, los candidatos para cada
+  //? puesto, la cantidad de votos que recibieron y el porcentaje que sacaron organizado
+  //? del más alto el ganador hasta el más bajo).
+  
+  //Todo: En ese listado debe mostrar cual es la elección que está activa y sobre la elección
+  //Todo: activa solo debe mostrar la opción de finalizar, una vez pulsado sobre finalizar
+  //Todo: ningún elector podrá seguir votando sobre la misma y se podrá acceder a la opción
+  //Todo: de resultados para ver los ganadores de los comicios.
+
+  const eleccionId = req.params.eleccionId;
+  
+  if (!eleccionId) {
+    return res.redirect("/user");
+  }
+
+  const Votos = await Voto.findAll({
+    raw: true,
+    where: { EleccioneId: eleccionId },
+    include: [{model: Elecciones}, {model: Candidato}, {model: Puesto}]
+  });
+
+  const candidatosEleccion = Votos.map(p => {
+    const candidato = {
+      id: p['Candidato.Id'],
+      name: p['Candidato.name'],
+      lastName: p['Candidato.lastName'],
+      puestoId: p['Candidato.PuestoId'],
+      img: p['Candidato.imgPerfil'],
+      partidoId: p['Candidato.PartidoId'],
+    }
+    candidato.votos = Votos.filter(v => v['Candidato.Id'] === candidato.id).length;
+    return candidato
+  })
+
+  const eleccionPuestos = Votos.map(p => {
+    const id = p['Puesto.Id']
+    const candidatos = candidatosEleccion.filter(f => f.puestoId === id)
+    candidatos.sort((a, b) => b.votos - a.votos)
+    return {
+      id: id,
+      name: p['Puesto.name'],
+      candidatos
+    }
+  })
+
+  return res.status(200).json({
+    eleccionPuestos,
+    ok: true
+  })
 };
