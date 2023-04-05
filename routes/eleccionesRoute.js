@@ -9,5 +9,6 @@ router.get("/edit-eleccion/:eleccionId", EleccionesController.GetEditEleccion);
 router.post("/edit-eleccion", EleccionesController.PostEditEleccion);
 router.post("/delete-eleccion", EleccionesController.PostDeleteElecciones);
 router.post("/confirm-delete-eleccion", EleccionesController.PostConfirmDeleteEleccion);
+router.get("/eleccion-results/:eleccionId", EleccionesController.GetResultadosElecciones);
 
 module.exports = router;

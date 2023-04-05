@@ -152,8 +152,13 @@ Puesto.belongsToMany(Elecciones, { through: EleccionPuesto });
 Elecciones.belongsToMany(Ciudadano, { through: Votos });
 Ciudadano.belongsToMany(Elecciones, { through: Votos });
 
+Votos.belongsTo(Candidato);
+Votos.belongsTo(Elecciones);
+Votos.belongsTo(Ciudadano);
+Votos.belongsTo(Puesto);
+
 sequelize
-  .sync({alter: true})
+  .sync()
   .then((result) => {
     app.listen(5000);
   })
