@@ -1,0 +1,101 @@
+<div class="row">
+
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+
+    {{#if hasPartido}}
+
+    {{#if hasPuestos}}
+
+    <div class="card">
+      <div class="card-header bg-dark text-white">
+        {{#if editMode}}Edicion{{else}}Creacion{{/if}} de candidato
+      </div>
+      <div class="card-body">
+
+        <form enctype="multipart/form-data" class="needs-validation" novalidate method="POST" action="{{#if editMode}}/edit-candidato{{else}}/create-candidato{{/if}}">
+          <div class="mb-3">
+            <label for="name" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="name" name="name" required value="{{#if editMode}}{{candidato.name}}{{/if}}" />
+          </div>
+
+          <div class="mb-3">
+            <label for="lastName" class="form-label">Apellido</label>
+            <input type="text" class="form-control" id="lastName" name="lastName" required value="{{#if editMode}}{{candidato.lastName}}{{/if}}" />
+          </div>
+
+          
+
+          <div class="mb-3">
+            <label for="formFile" class="form-label">Seleccione una imagen: </label>
+            <input class="form-control" name="img" type="file" id="formFile" {{#if editMode}}{{else}}required{{/if}}>
+          </div>
+
+          <div class="mb-3">
+            <label for="partidoId" class="form-label">Partido: </label>
+            <select class="form-select" id="partidoId" name="PartidoId" required>
+              <option {{#if editMode}}{{else}}selected value=""{{/if}}>Seleccione una opcion</option>
+
+              {{#each partido as |partido|}}
+
+                  {{#if (equalValue partido.Id ../candidato.PartidoId )}}
+                  <option selected value="{{partido.Id}}">{{partido.name}}</option>
+                  {{else}}
+                  <option value="{{partido.Id}}">{{partido.name}}</option>
+                  {{/if}}
+                 
+               {{/each}}
+              
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="puestoId" class="form-label">Puesto: </label>
+            <select class="form-select" id="puestoId" name="PuestoId" required>
+              <option {{#if editMode}}{{else}}selected value=""{{/if}}>Seleccione una opcion</option>
+
+              {{#each puestos as |puesto|}}
+
+                  {{#if (equalValue puesto.Id ../candidato.PuestoId )}}
+                  <option selected value="{{puesto.Id}}">{{puesto.name}}</option>
+                  {{else}}
+                  <option value="{{puesto.Id}}">{{puesto.name}}</option>
+                  {{/if}}
+                 
+               {{/each}}
+              
+            </select>
+          </div>
+
+
+         
+
+          {{#if editMode}}
+
+          <input type="hidden" name="candidatoId" value="{{candidato.Id}}">
+          
+          {{/if}}
+
+          <button type="submit" class="btn btn-primary btn-create-validations">{{#if editMode}}Editar{{else}}Crear{{/if}}</button>
+           <a href="/candidato" type="button" class="btn btn-warning">volver atras</a>
+        </form>
+
+      </div>
+    </div>
+
+    {{else}}
+
+    <h1>No hay puestos creados</h1>
+
+    {{/if}}
+
+    {{else}}
+
+    <h1>No hay partidos creados</h1>
+
+    {{/if}}
+
+  </div>
+  <div class="col-md-6"></div>
+
+</div>

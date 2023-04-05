@@ -1,0 +1,62 @@
+<section class="py-5 text-center container">
+  <div class="row py-lg-5">
+    <div class="col-lg-6 col-md-8 mx-auto">
+      <h1 class="fw-light">Sistema de elecciones</h1>
+      <a href="/create-eleccion" class="btn btn-primary my-2">Crear nueva elección</a>
+        {{#if isAuthenticated}}
+        
+        {{/if}}
+    </div>
+  </div>
+</section>
+
+<div class="album py-5 bg-light">
+  <div class="container">
+
+    <div class="row">
+
+      {{#if hasEleccion}}
+
+        {{#each eleccion as |eleccion|}}
+
+          <div class="card col-md-5">
+            <div class="card-body">
+              <h5 class="card-title">{{eleccion.name}}</h5>
+              <h6 class="card-subtitle">{{eleccion.fechaRealizacion}}</h6>
+              <h6 class="card-subtitle text-muted">{{eleccion.status}}</h6>
+
+                <a
+                    href="/edit-eleccion/{{eleccion.Id}}?edit=true"
+                    class="btn btn-warning"
+                  >Editar</a>
+              
+                <a href="#" class="btn btn-primary">Resultados</a>
+
+                <form class="form-inline form-delete" action="#" method="post">
+                  <input type="hidden" name="eleccionId" value="{{eleccion.Id}}" />
+                  <button type="submit" class="btn btn-success">Iniciar</button>
+                </form>
+
+                <form class="form-inline form-delete" action="/delete-eleccion" method="post">
+                  <input type="hidden" name="eleccionId" value="{{eleccion.Id}}" />
+                  <button type="submit" class="btn btn-danger delete-eleccion">Finalizar</button>
+                </form>
+
+
+               {{#if ../isAuthenticated}}
+              
+              {{/if}}
+            </div>
+          </div>
+
+        {{/each}}
+
+      {{else}}
+
+        <h1>no hay elecciones creados</h1>
+
+      {{/if}}
+
+    </div>
+  </div>
+</div>

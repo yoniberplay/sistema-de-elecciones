@@ -31,13 +31,13 @@ exports.GetCreatePartido = (req, res, next) => {
 exports.PostCreatePartido = (req, res, next) => {
   const name = req.body.name;
   const description = req.body.description;
-  const imgLogo = req.body.imgLogo;
+  const imgLogo = req.file;
   const status = true;
 
   Partido.create({
     name: name,
     description: description,
-    imgLogo: imgLogo,
+    imgLogo: "/" + imgLogo.path,
     status: status,
   })
     .then((result) => {
@@ -45,7 +45,7 @@ exports.PostCreatePartido = (req, res, next) => {
     })
     .catch((err) => {
       res.render("Error/ErrorInterno", {
-        pageTitle: "Error",
+        pageTitle: "Error Interno",
         mensaje: err,
       });
     });
@@ -54,12 +54,12 @@ exports.PostCreatePartido = (req, res, next) => {
 exports.GetEditPartido = (req, res, next) => {
   const edit = req.query.edit;
   const partidoId = req.params.partidoId;
-
+  
   if (!edit) {
     return res.redirect("/partido");
   }
 
-  Partido.findOne({ where: { id: partidoId } })
+  Partido.findOne({ where: { Id: partidoId } })
     .then((result) => {
       const pue = result.dataValues;
       if (!pue) {
@@ -84,14 +84,35 @@ exports.PostEditPartido = (req, res, next) => {
   const name = req.body.name;
   const description = req.body.description;
   const partidoId = req.body.partidoId;
-  const imgLogo = req.body.imgLogo;
+  const imgLogo = req.file;
 
-  Partido.update(
-    { name: name, description: description, imgLogo: imgLogo, },
-    { where: { Id: partidoId } }
-  )
+  Partido.findOne({ where: { Id: partidoId } })
     .then((result) => {
-      return res.redirect("/partido");
+
+      const bk = result.dataValues;
+      
+      if (!bk) {
+        return res.redirect("/partido");
+      }
+      const imagePath = imgLogo ? "/" + imgLogo.path : bk.img;
+      Partido.update(
+        {
+          name: name,
+          description: description,
+          partidoId: partidoId,
+          imgLogo: imagePath,
+        },
+        { where: { Id: partidoId } }
+      )
+        .then((result) => {
+          return res.redirect("/partido");
+        })
+        .catch((err) => {
+          res.render("Error/ErrorInterno", {
+            pageTitle: "Error Interno",
+            mensaje: err,
+          });
+        });
     })
     .catch((err) => {
       res.render("Error/ErrorInterno", {

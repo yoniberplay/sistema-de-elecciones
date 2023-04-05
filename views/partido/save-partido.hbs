@@ -1,0 +1,52 @@
+<div class="row">
+
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+
+    <div class="card">
+      <div class="card-header bg-dark text-white">
+        {{#if editMode}}Edicion{{else}}Creacion{{/if}} de partidos
+      </div>
+      <div class="card-body">
+
+        <form enctype="multipart/form-data" class="needs-validation" novalidate method="POST" action="{{#if editMode}}/edit-partido{{else}}/create-partido{{/if}}">
+          <div class="mb-3">
+            <label for="name" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="name" name="name" required value="{{#if editMode}}{{partido.name}}{{/if}}" />
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Descripcion</label>
+            <textarea
+              name="description"
+              id="description"
+              cols="60"
+              rows="5"
+              class="form-control"
+              required
+            >{{#if editMode}}{{partido.description}}{{/if}}</textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="formFile" class="form-label">Seleccione una imagen: </label>
+            <input class="form-control" name="img" type="file" id="formFile" {{#if editMode}}{{else}}required{{/if}}>
+          </div>
+  
+
+          {{#if editMode}}
+
+          <input type="hidden" name="partidoId" value="{{partido.Id}}">
+          
+          {{/if}}
+
+          <button type="submit" class="btn btn-primary btn-create-validations">{{#if editMode}}Editar{{else}}Crear{{/if}}</button>
+           <a href="/partido" type="button" class="btn btn-warning">volver atras</a>
+        </form>
+
+      </div>
+    </div>
+
+  </div>
+  <div class="col-md-6"></div>
+
+</div>

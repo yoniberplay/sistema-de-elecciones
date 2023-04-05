@@ -61,7 +61,7 @@ exports.GetEditEleccion = (req, res, next) => {
     return res.redirect("/eleccion");
   }
 
-  Elecciones.findOne({ where: { id: eleccionId } })
+  Elecciones.findOne({ where: { Id: eleccionId } })
     .then((result) => {
       const pue = result.dataValues;
       if (!pue) {

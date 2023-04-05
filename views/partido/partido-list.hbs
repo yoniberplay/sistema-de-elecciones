@@ -1,0 +1,56 @@
+<section class="py-5 text-center container">
+  <div class="row py-lg-5">
+    <div class="col-lg-6 col-md-8 mx-auto">
+      <h1 class="fw-light">Sistema de elecciones</h1>
+      <a href="/create-partido" class="btn btn-primary my-2">Crear nuevo partido</a>
+        {{#if isAuthenticated}}
+        
+        {{/if}}
+    </div>
+  </div>
+</section>
+
+<div class="album py-5 bg-light">
+  <div class="container">
+
+    <div class="row">
+
+      {{#if hasPartido}}
+
+        {{#each partido as |partido|}}
+
+          <div class="card col-md-3">
+            <img src="{{partido.imgLogo}}" class="card-img-top img-size" alt="{{partido.name}}">
+            <div class="card-body">
+              <h5 class="card-title">{{partido.name}}</h5>
+              <p class="card-text">{{partido.description}}</p>
+              <h6 class="card-subtitle mb-2 text-muted">{{partido.status}}</h6>
+              <h6 class="card-subtitle mb-2 text-muted">Id: {{partido.Id}}</h6>
+              <a
+                href="/edit-partido/{{partido.Id}}?edit=true"
+                class="btn btn-warning"
+              >Editar</a>
+
+              <form class="form-inline form-delete" action="/delete-partido" method="post">
+                <input type="hidden" name="partidoId" value="{{partido.Id}}" />
+                <button type="submit" class="btn btn-danger delete-partido">Eliminar</button>
+
+              </form>
+
+              {{#if ../isAuthenticated}}
+              
+              {{/if}}
+            </div>
+          </div>
+
+        {{/each}} 
+
+      {{else}}
+
+        <h1>no hay partidos creados</h1>
+
+      {{/if}}
+
+    </div>
+  </div>
+</div>
