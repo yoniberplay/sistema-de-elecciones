@@ -9,6 +9,12 @@ exports.GetLoginCiudadano = (req, res, next) => {
   });
 };
 
+exports.GetAdminHome = (req, res, next) => {
+  res.render("auth/admin-home", {
+    pageTitle: "Sistema de Elecciones",
+  });
+};
+
 exports.PostLoginCiudadano = async (req, res, next) => {
   const cedula = req.body.cedula;
   
@@ -31,9 +37,7 @@ exports.PostLoginCiudadano = async (req, res, next) => {
       return res.redirect("/");
     }
 
-    //! ~!~~~Apa;amiento
-    req.flash("success", "Hay una eleccion activa.");
-    req.session.isLoggedIn = true;
+    req.flash("success", `Gracias por participar en ${EleccionActiva.name}`);
 
     req.session.eleccion = EleccionActiva;
     req.session.ciudadano = ciudadano;
@@ -70,7 +74,6 @@ exports.PostLogin = (req, res, next) => {
         req.flash("errors", "email is invalid ");
         return res.redirect("/login");
       }
-
       bcrypt
         .compare(password, user.password)
         .then((result) => {
@@ -79,7 +82,7 @@ exports.PostLogin = (req, res, next) => {
             req.session.user = user;
             return req.session.save((err) => {
               console.log(err);
-              res.redirect("/");
+              res.redirect("/admin");
             });
           }
           req.flash("errors", "password is invalid");

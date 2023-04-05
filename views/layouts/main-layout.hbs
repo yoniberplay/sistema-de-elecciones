@@ -18,7 +18,7 @@
 <body>
 
 
-  {{#if loginActive}}
+  {{#if ciudadanoActive}}
 
   {{else}}
   <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
@@ -31,6 +31,23 @@
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav me-auto mb-2 mb-md-0">
 
+          {{#if isAuthenticated}}
+          <li class="nav-item">
+            <a class="nav-link {{#if racesActive}}active{{/if}}" href="/races">Candidatos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{#if homeActive}}active{{/if}}" aria-current="page" href="/">Partido</a>
+          </li>
+           <li class="nav-item">
+            <a class="nav-link {{#if homeActive}}active{{/if}}" aria-current="page" href="/">Puesto Electivo</a>
+          </li>
+           <li class="nav-item">
+            <a class="nav-link {{#if homeActive}}active{{/if}}" aria-current="page" href="/">Ciudadanos</a>
+          </li>
+           <li class="nav-item">
+            <a class="nav-link {{#if homeActive}}active{{/if}}" aria-current="page" href="/">Elecciones</a>
+          </li>
+          {{/if}}
         </ul>
 
         <div class="d-flex">
@@ -46,9 +63,14 @@
             </li>
 
             {{else}}
+
+            {{#if isCiudadano}}
+
+             {{else}}
             <li class="nav-item">
               <a class="nav-link" aria-current="page" href="/login">Login</a>
             </li>
+             {{/if}}
 
             {{/if}}
 
@@ -66,7 +88,7 @@
 
     {{#if hasErrorMessages}}
 
-    <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
       <ul>
         {{#each errorMessages}}
         <li>{{this}}</li>
@@ -85,7 +107,7 @@
         <li>{{this}}</li>
         {{/each}}
       </ul>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      <button type="button" class="btn-close mt-4" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
     {{/if}}
