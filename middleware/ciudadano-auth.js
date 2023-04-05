@@ -11,7 +11,7 @@ exports.ciudadanoAuth = (req, res, next) => {
 
 exports.votingCiudadanoTracking = async (req, res, next) => {
   const Ciudadano = req.session.ciudadano
-
+  //! SE DEBE VALIDAR QUE EL VOTO Y EL PUESTO SEA DE LA SELECCION EN CURSO
   const Votos = await Voto.findAll({raw: true, where: {CiudadanoId: Ciudadano.Id}})
   const Puestos = await Puesto.findAll({raw: true})
   
