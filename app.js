@@ -152,7 +152,7 @@ Elecciones.belongsToMany(Ciudadano, { through: Votos });
 Ciudadano.belongsToMany(Elecciones, { through: Votos });
 
 sequelize
-  .sync()
+  .sync({alter: true})
   .then((result) => {
     app.listen(5000);
   })

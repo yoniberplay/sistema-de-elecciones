@@ -33,7 +33,6 @@ exports.PostLoginCiudadano = async (req, res, next) => {
 
     //! ~!~~~Apa;amiento
     req.flash("success", "Hay una eleccion activa.");
-    req.session.isLoggedIn = true;
 
     req.session.eleccion = EleccionActiva;
     req.session.ciudadano = ciudadano;

@@ -12,23 +12,29 @@ exports.ciudadanoAuth = (req, res, next) => {
 exports.votingCiudadanoTracking = async (req, res, next) => {
   const Ciudadano = req.session.ciudadano
 
-  // const Votos = await Voto.findAll({raw: true, where: {CiudadanoId: Ciudadano.Id}})
-  // const Puestos = await Puesto.findAll({raw: true})
-  const Votos = [];
-  const Puestos = [];
+  const Votos = await Voto.findAll({raw: true, where: {CiudadanoId: Ciudadano.Id}})
+  const Puestos = await Puesto.findAll({raw: true})
+  
+  //? mi logica es recorrer en un bucle anidado los votos que tiene el ciudadano
+  //? y mapear los puestos a los que no ha votado asi puedo elegir que puesto votara 
+  //? a continuacion
 
-  Voto.findAll({where: {CiudadanoId: Ciudadano.Id}}).then((r) => {
-    const x = r.map(p => p.getDataValue)
+  const puestosYaVotados = [];
 
-    x.forEach(e => {
-      Puestos.push(e)
-      console.log(e);
+  Votos.forEach(e => {
+    console.log("e: ", e);
+    Puestos.forEach( p => {
+      console.log("p: ", e);
+      if (e.PuestoId === p.Id) {
+        puestosYaVotados.push(p)
+      }
     })
   })
 
-  const pendingForVote = Puestos.filter(p => p.id != Ciudadano.Id)
-
-  console.log(Votos, "\n", Puestos, "\n", pendingForVote);
-
+  const puestosNoVotados = Puestos.filter(puesto => !puestosYaVotados.find(p => p.Id === puesto.Id));
+  
+  //?Almacenar el listado de los puestos
+  req.session.puestosNoVotados = puestosNoVotados
+ 
   next();
 }
