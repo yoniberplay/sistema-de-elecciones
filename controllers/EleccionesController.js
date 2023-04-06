@@ -5,14 +5,22 @@ const Candidato = require("../models/Candidato");
 const Partido = require("../models/Partido");
 const Puesto = require("../models/Puesto");
 
+
+function myFunction() {
+  alert("Hello! I am an alert box!");
+}
+
 exports.GetEleccionesList = (req, res, next) => {
   Elecciones.findAll()
     .then((result) => {
       let eleccion = result.map((result) => result.dataValues);
+      let canCreateEleccion = eleccion.find(e => e.status === true);
+      
       res.render("eleccion/eleccion-list", {
         pageTitle: "eleccion",
         eleccionActive: true,
         eleccion: eleccion,
+        canCreateEleccion: canCreateEleccion,
         hasEleccion: eleccion.length > 0,
       });
     })

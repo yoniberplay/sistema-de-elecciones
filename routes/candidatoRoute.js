@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const CandidatoController = require('../controllers/CandidatoController');
+const admintauth = require("../middleware/is-auth");
 
-router.get("/candidato",CandidatoController.GetCandidatoList);
-router.get("/create-candidato", CandidatoController.GetCreateCandidato);
-router.post("/create-candidato", CandidatoController.PostCreateCandidato);
-router.get("/edit-candidato/:candidatoId", CandidatoController.GetEditCandidato);
-router.post("/edit-candidato", CandidatoController.PostEditCandidato);
-router.post("/delete-candidato", CandidatoController.PostDeleteCandidato);
-router.post("/confirm-delete-candidato", CandidatoController.PostConfirmDeleteCandidato);
+router.get("/candidato",admintauth,CandidatoController.GetCandidatoList);
+router.get("/create-candidato", admintauth,CandidatoController.GetCreateCandidato);
+router.post("/create-candidato", admintauth,CandidatoController.PostCreateCandidato);
+router.get("/edit-candidato/:candidatoId", admintauth,CandidatoController.GetEditCandidato);
+router.post("/edit-candidato", admintauth,CandidatoController.PostEditCandidato);
+router.post("/delete-candidato", admintauth,CandidatoController.PostDeleteCandidato);
+router.post("/confirm-delete-candidato", admintauth,CandidatoController.PostConfirmDeleteCandidato);
 
 module.exports = router;

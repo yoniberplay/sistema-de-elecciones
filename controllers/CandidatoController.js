@@ -49,7 +49,7 @@ const validationsBeforeCreate = async (req, res, next) => {
   const PuestoActivo = await Puesto.findOne({raw: true, where: {status: true}});
 
   if (!PuestoActivo) {
-    return {status: false, message: "Debe existing al menos 1 puesto activo  en el sistema"};
+    return {status: false, message: "Debe existir al menos 1 puesto activo  en el sistema"};
 
   }
 
@@ -60,22 +60,20 @@ const validationsBeforeCreate = async (req, res, next) => {
 exports.GetCreateCandidato = async (req, res, next) => {
 
   const isValid = await validationsBeforeCreate();
-
   if (isValid.status) {
     res.render("candidato/save-candidato", {
       pageTitle: "Create candidato",
       candidatoActive: true,
       editMode: false,
-        partido: partido,
-            puestos: puestos,
-            hasPuestos: puestos.length > 0,
-            hasPartido: partido.length > 0,
+      partido: partido,
+      puestos: puestos,
+      hasPuestos: puestos.length > 0,
+      hasPartido: partido.length > 0,
     });
   } else {
+    req.flash("errors", isValid.message)
 
-    req.flash("erros", isValid.message)
-
-    return res.redirect("/user");
+    return res.redirect("/admin");
   }
  
 };
