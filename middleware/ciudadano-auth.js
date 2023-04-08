@@ -22,9 +22,9 @@ exports.votingCiudadanoTracking = async (req, res, next) => {
   const puestosYaVotados = [];
 
   Votos.forEach(e => {
-    console.log("e: ", e);
+   
     Puestos.forEach( p => {
-      console.log("p: ", e);
+   
       if (e.PuestoId === p.Id) {
         puestosYaVotados.push(p)
       }
@@ -35,6 +35,6 @@ exports.votingCiudadanoTracking = async (req, res, next) => {
   
   //?Almacenar el listado de los puestos
   req.session.puestosNoVotados = puestosNoVotados
- 
+  
   next();
 }

@@ -163,7 +163,7 @@ Puesto.hasMany(Votos);
 Elecciones.hasMany(Votos);
 
 sequelize
-  .sync({alter: true})
+  .sync()
   .then((result) => {
     app.listen(5000);
   })

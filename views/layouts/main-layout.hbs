@@ -14,13 +14,20 @@
 
   {{/if}}
   <title>{{pageTitle}}</title>
+
+  {{#if votacionActive}} 
+  <script src="/assets/js/site/votacion.js" async></script>
+  <script src="/assets/js/site/votacionComponents/printCandidato.js" async></script>
+  <script src="/assets/js/site/votacionComponents/printCandidatos.js" async></script>
+  <script src="/assets/js/site/votacionComponents/printPuestos.js" async></script>
+  {{/if}}
 </head>
 
 <body>
 
   <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">Votaciones</a>
+      <a class="navbar-brand" href="/votacion">Votaciones</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
         aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -81,7 +88,7 @@
 
 
 
-  <main class="container">
+  <main class="col-12 px-1 py-1 px-lg-0 py-lg-0 col-lg-12">
 
     {{#if hasErrorMessages}}
 
@@ -119,7 +126,7 @@
 
 
   {{#if homeActive}}
-  <script src="/assets/js/index/index.js"></script>{{/if}}
+  <script src="/assets/js/site/index.js"></script>{{/if}}
 
 </body>
 
