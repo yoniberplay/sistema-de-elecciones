@@ -12,4 +12,7 @@ router.get('/puestosNoVotados', vct,  Auth, VotacionController.puestosNoVotadosC
 
 router.get('/getCandidatoList/:puestoId', Auth, VotacionController.GetCandidatoList);
 
+
+router.post('/votar', Auth, VotacionController.PostAddVotacion);
+
 module.exports = router;

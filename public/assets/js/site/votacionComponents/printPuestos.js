@@ -1,8 +1,6 @@
-
-
 function printPuestos(puestosList) {
     const posicionesContainer = document.querySelector("#posicionesContainer");
-  
+
     puestosList.forEach((element) => {
       // Crear el elemento div principal
       const divPrincipal = document.createElement("div");
@@ -40,7 +38,7 @@ function printPuestos(puestosList) {
       boton.classList.add("btn", "btn-outline-success");
       boton.textContent = "Empezar votación";
       boton.addEventListener("click", () => {
-        printCandidatos(element.Id);
+        printCandidatos(element.Id, element.name);
       });
       // Agregar el título y el botón al segundo div interno
       divTitulo.appendChild(titulo);
