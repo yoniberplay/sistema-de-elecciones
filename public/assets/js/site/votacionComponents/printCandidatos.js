@@ -1,14 +1,18 @@
-async function printCandidatos(puestoId) {
+async function printCandidatos(puestoId, puestoName) {
 
   const titulo = document.querySelector("#textToDo");
-  titulo.textContent = "Candidatos";
+  
+  let texto = puestoName;
+  texto = texto.toLowerCase(); // convierte todo el texto en minúsculas
+  texto = texto.charAt(0).toUpperCase() + texto.slice(1); // convierte la primera letra en mayúscula
+  
+  titulo.textContent = texto;
   titulo.classList.add("text-white");
   
   const candidatos = await getCandidatos(puestoId);
 
   if (candidatos.length < 1) {
   } else {
-    console.log(candidatos);
 
     const posicionesContainer = document.querySelector("#posicionesContainer");
     posicionesContainer.innerHTML = "";
