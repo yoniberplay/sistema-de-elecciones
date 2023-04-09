@@ -1,8 +1,6 @@
-
-
 function printPuestos(puestosList) {
     const posicionesContainer = document.querySelector("#posicionesContainer");
-  
+
     puestosList.forEach((element) => {
       // Crear el elemento div principal
       const divPrincipal = document.createElement("div");

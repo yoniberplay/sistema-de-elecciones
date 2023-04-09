@@ -59,6 +59,9 @@ function printCandidato(candidato) {
     button.className = "btn btn-outline-light flex-shrink-0";
     button.type = "button";
     button.textContent = "Votar";
+    button.addEventListener('click' ,() => {
+      postAddVotacion(candidato)
+    })
   
     divBtn.appendChild(button);
   
@@ -76,4 +79,6 @@ function printCandidato(candidato) {
     section.appendChild(container);
   
     posicionesContainer.appendChild(section);
+
+    console.log(candidato);
   }

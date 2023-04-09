@@ -47,8 +47,12 @@ app.engine(
 app.set("view engine", "hbs");
 app.set("views", "views");
 
-// Convertir la data recibida por post en un json
+// Configura el middleware para analizar las solicitudes entrantes con el tipo de contenido "application/x-www-form-urlencoded" utilizando la biblioteca "qs".
 app.use(express.urlencoded({ extended: false }));
+
+// Convertir la data recibida por post en un json
+app.use(express.json());
+
 
 //Hacer los datos de la dentro de la carpeta public e images publicos
 app.use(express.static(path.join(__dirname, "public")));
@@ -149,8 +153,8 @@ Partido.hasMany(Candidato);
 Candidato.belongsTo(Partido, { constraint: true, onDelete: "CASCADE" });
 Elecciones.belongsToMany(Puesto, { through: EleccionPuesto });
 Puesto.belongsToMany(Elecciones, { through: EleccionPuesto });
-Elecciones.belongsToMany(Ciudadano, { through: Votos });
-Ciudadano.belongsToMany(Elecciones, { through: Votos });
+Elecciones.belongsToMany(Ciudadano, { through: Votos, unique: false  });
+Ciudadano.belongsToMany(Elecciones, { through: Votos, unique: false  });
 
 Votos.belongsTo(Candidato);
 Votos.belongsTo(Ciudadano);
