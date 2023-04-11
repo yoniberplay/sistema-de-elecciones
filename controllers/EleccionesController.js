@@ -15,7 +15,6 @@ exports.GetEleccionesList = (req, res, next) => {
     .then((result) => {
       let eleccion = result.map((result) => result.dataValues);
       let canCreateEleccion = eleccion.find(e => e.status === true);
-      
       res.render("eleccion/eleccion-list", {
         pageTitle: "eleccion",
         eleccionActive: true,
