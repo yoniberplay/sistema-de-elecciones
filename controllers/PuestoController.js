@@ -38,11 +38,14 @@ exports.GetCreatePuesto = (req, res, next) => {
   });
 };
 
-exports.PostCreatePuesto = (req, res, next) => {
+exports.PostCreatePuesto = async (req, res, next) => {
   const name = req.body.name;
   const description = req.body.description;
   const status = true;
-  Puesto.create({ name: name, description: description, status: status })
+
+  const activeEleccion = await Eleccion.findOne({ raw: true, where: {status: true}})
+
+  Puesto.create({ name: name, description: description, status: status, eleccionId: activeEleccion.Id })
     .then((result) => {
       res.redirect("/puesto");
     })
