@@ -5,7 +5,6 @@ const Candidato = require("../models/Candidato");
 const Partido = require("../models/Partido");
 const Puesto = require("../models/Puesto");
 
-
 function myFunction() {
   alert("Hello! I am an alert box!");
 }
@@ -13,8 +12,13 @@ function myFunction() {
 exports.GetEleccionesList = (req, res, next) => {
   Elecciones.findAll()
     .then((result) => {
-      let eleccion = result.map((result) => result.dataValues);
-      let canCreateEleccion = eleccion.find(e => e.status === true);
+      
+      let eleccion = result
+        .map((result) => result.dataValues)
+        .sort((a, b) => b.status - a.status);
+
+
+      let canCreateEleccion = eleccion.find((e) => e.status === true);
       res.render("eleccion/eleccion-list", {
         pageTitle: "eleccion",
         eleccionActive: true,
@@ -147,46 +151,40 @@ exports.PostDeleteElecciones = (req, res, next) => {
     });
 };
 
-exports.GetResultadosElecciones =  async (req, res, next) => {
+exports.GetResultadosElecciones = async (req, res, next) => {
   const eleccionId = req.params.eleccionId;
-
 
   if (!eleccionId) {
     return res.redirect("/user");
   }
 
-  const eleccion = await Elecciones.findByPk(eleccionId, {raw: true})
+  const eleccion = await Elecciones.findByPk(eleccionId, { raw: true });
 
-  const eleccionInfo = await eleccionPuestosInfo(eleccionId)
+  const eleccionInfo = await eleccionPuestosInfo(eleccionId);
   // res.json({
   //   eleccionInfo
   // })
   res.status(200).render("eleccion_resultado/resultado", {
     puestos: eleccionInfo,
     hasPuestos: eleccionPuestosInfo.length > 0,
-    eleccion
-  })
+    eleccion,
+  });
+};
 
-}
-
-async function eleccionPuestosInfo  (eleccionId) {
- 
+async function eleccionPuestosInfo(eleccionId) {
   const Votos = await Voto.findAll({
     raw: true,
     where: { EleccioneId: eleccionId },
-    include: [
-      {model: Elecciones}, 
-      {model: Candidato}, 
-      {model: Puesto}]
+    include: [{ model: Elecciones }, { model: Candidato }, { model: Puesto }],
   });
 
-  const Candidatos = await Candidato.findAll({raw: true})
+  const Candidatos = await Candidato.findAll({ raw: true });
 
-  const Puestos = await Puesto.findAll({raw: true, where: {eleccionId}})
+  const Puestos = await Puesto.findAll({ raw: true, where: { eleccionId } });
 
-  const Partidos = await Partido.findAll({raw: true})
+  const Partidos = await Partido.findAll({ raw: true });
 
-  const candidatosEleccion =  Candidatos.map( p => {
+  const candidatosEleccion = Candidatos.map((p) => {
     const candidato = {
       id: p.Id,
       name: p.name,
@@ -194,24 +192,26 @@ async function eleccionPuestosInfo  (eleccionId) {
       puestoId: p.PuestoId,
       img: p.imgPerfil,
       partidoId: p.PartidoId,
-    }
-    candidato.votos = Votos.filter(v => v['Candidato.Id'] === candidato.id).length;
-    candidato.partido = Partidos.filter(v => v.Id === candidato.partidoId);
-    candidato.porcentaje = Math.round((candidato.votos / Votos.length) * 100)
-    return candidato
-  })
+    };
+    candidato.votos = Votos.filter(
+      (v) => v["Candidato.Id"] === candidato.id
+    ).length;
+    candidato.partido = Partidos.filter((v) => v.Id === candidato.partidoId);
+    candidato.porcentaje = Math.round((candidato.votos / Votos.length) * 100);
+    return candidato;
+  });
 
-  const eleccionPuestos = Puestos.map(p => {
-    const id = p.Id
-    const candidatos = candidatosEleccion.filter(f => f.puestoId === id)
-    candidatos.sort((a, b) => b.votos - a.votos)
+  const eleccionPuestos = Puestos.map((p) => {
+    const id = p.Id;
+    const candidatos = candidatosEleccion.filter((f) => f.puestoId === id);
+    candidatos.sort((a, b) => b.votos - a.votos);
 
     return {
       id: id,
       name: p.name,
-      candidatos
-    }
-  })
+      candidatos,
+    };
+  });
 
-  return eleccionPuestos
-};
+  return eleccionPuestos;
+}
