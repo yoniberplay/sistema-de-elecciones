@@ -23,11 +23,14 @@
 
       {{#each eleccion as |eleccion|}}
 
-      <div class="card col-md-5">
+      <div class="card col-md-5 me-2">
         <div class="card-body">
-          <h5 class="card-title">{{eleccion.name}}</h5>
-          <h6 class="card-subtitle">{{eleccion.fechaRealizacion}}</h6>
-          <h6 class="card-subtitle text-muted">{{eleccion.status}}</h6>
+          <h5 class="card-title mb-2 text-capitalize">{{eleccion.name}}</h5>
+          <h6 class="card-subtitle mb-2">Fecha: {{eleccion.fechaRealizacion}}</h6>
+          <h6 class="card-subtitle text-muted mb-2">Estado: 
+            {{#if eleccion.status}} <span class="text-success fw-bold">Activa</span> 
+            {{else}}Inactiva {{/if}}
+          </h6>
 
           {{!-- <a href="/edit-eleccion/{{eleccion.Id}}?edit=true" class="btn btn-warning">Editar</a> --}}
 
@@ -40,10 +43,10 @@
           {{#if eleccion.status}}
           <form class="form-inline form-delete" action="/delete-eleccion" method="post">
             <input type="hidden" name="eleccionId" value="{{eleccion.Id}}" />
-            <button type="submit" class="btn btn-danger delete-eleccion">Finalizar</button>
+            <button type="submit" class="btn btn-danger delete-eleccion float-end">Finalizar</button>
           </form>
           {{else}}
-          <a href="/eleccion-results/{{eleccion.Id}}" class="btn btn-primary">Resultados</a>
+          <a href="/eleccion-results/{{eleccion.Id}}" class="btn btn-primary float-end">Resultados</a>
           {{/if}}
 
 
