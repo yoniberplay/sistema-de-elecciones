@@ -4,9 +4,11 @@ fetch("http://localhost:5000/puestosNoVotados")
   .then((data) => {
     const titulo = document.querySelector("#textToDo");
 
-    if (data.hasPuestos) {
-      printPuestos(data.PuestosNoVotados);
-    } else {
+    if (!data.hasPuestos) {
+      titulo.textContent = data.mensaje;
+      titulo.classList.remove("text-white");
+      titulo.classList.add("text-danger");
+    }else {
       titulo.textContent = "Usted ya ha ejercido su derecho al voto!";
       titulo.classList.remove("text-white");
       titulo.classList.add("text-danger");

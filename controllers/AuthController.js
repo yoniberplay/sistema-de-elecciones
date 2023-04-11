@@ -105,7 +105,6 @@ exports.PostLogin = (req, res, next) => {
 };
 
 exports.Logout = (req, res, next) => {
-  console.log(req.session.eleccion);
   req.session.destroy((err) => {
     if(err) {
       console.log(err);

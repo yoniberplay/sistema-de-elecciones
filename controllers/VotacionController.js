@@ -24,18 +24,21 @@ exports.getVotacionPage = (req, res, next) => {
 
 exports.puestosNoVotadosCiudadano = (req, res) => {
   const PuestosNoVotados = req.session.puestosNoVotados;
-
+  let hasPuestos = req.session.hasPuestos;
+  let hasVotos = req.session.hasVotos;
   if (!PuestosNoVotados || PuestosNoVotados.length < 1) {
     return res.json({
       ok: true,
-      hasPuestos: false,
-      mensaje: "no hay puestos por votar",
+      hasPuestos: hasPuestos,
+      hasVotos:hasVotos,
+      mensaje: "No hay puestos por votar",
     });
   }
 
   return res.json({
     ok: true,
-    hasPuestos: true,
+    hasPuestos: hasPuestos,
+    hasVotos:hasVotos,
     PuestosNoVotados,
   });
 };
