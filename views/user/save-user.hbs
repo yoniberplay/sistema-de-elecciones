@@ -14,7 +14,7 @@
         <form enctype="multipart/form-data" method="POST" action="{{#if editMode}}/edit-heroes{{else}}/create-heroes{{/if}}">
           <div class="mb-3">
             <label for="name" class="form-label">Nombre</label>
-            <input type="text" class="form-control" id="name" name="Name" value="{{#if editMode}}{{hero.name}}{{/if}}" />
+            <input type="text" class="form-control" id="name" name="Name" required value="{{#if editMode}}{{hero.name}}{{/if}}" />
           </div>
 
           <div class="mb-3">

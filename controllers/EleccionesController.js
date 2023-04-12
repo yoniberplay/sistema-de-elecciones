@@ -10,6 +10,16 @@ function myFunction() {
 }
 
 exports.GetEleccionesList = (req, res, next) => {
+
+  let thereisCandidatos;
+  Candidato.findAll({ where: { status: true } })
+  .then(users => {
+    thereisCandidatos = users.length >= 2 ? false : true;
+  })
+  .catch(error => {
+    console.error(error);
+  });
+  
   Elecciones.findAll()
     .then((result) => {
       
@@ -24,6 +34,7 @@ exports.GetEleccionesList = (req, res, next) => {
         eleccionActive: true,
         eleccion: eleccion,
         canCreateEleccion: canCreateEleccion,
+        thereisCandidatos: thereisCandidatos,
         hasEleccion: eleccion.length > 0,
       });
     })

@@ -59,8 +59,29 @@ const validationsBeforeCreate = async (req, res, next) => {
 
 exports.GetCreateCandidato = async (req, res, next) => {
 
+  let partido;
+  Partido.findAll({ where: { status: true } })
+  .then(p => {
+    partido = p.map((result) => result.dataValues);
+    console.log(partido);
+  })
+  .catch(error => {
+    console.error(error);
+  });
+
+  let puestos;
+  Puesto.findAll({ where: { status: true } })
+  .then(p => {
+    puestos = p.map((result) => result.dataValues);
+    console.log(puestos);
+  })
+  .catch(error => {
+    console.error(error);
+  });
+
+
   const isValid = await validationsBeforeCreate();
-  if (isValid.status) {
+  if (isValid) {
     res.render("candidato/save-candidato", {
       pageTitle: "Create candidato",
       candidatoActive: true,

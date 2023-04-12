@@ -13,7 +13,7 @@
       </div>
       <div class="card-body">
 
-        <form enctype="multipart/form-data" class="needs-validation" novalidate method="POST" action="{{#if editMode}}/edit-candidato{{else}}/create-candidato{{/if}}">
+        <form enctype="multipart/form-data" class="needs-validation"  method="POST" action="{{#if editMode}}/edit-candidato{{else}}/create-candidato{{/if}}">
           <div class="mb-3">
             <label for="name" class="form-label">Nombre</label>
             <input type="text" class="form-control" id="name" name="name" required value="{{#if editMode}}{{candidato.name}}{{/if}}" />
@@ -22,13 +22,11 @@
           <div class="mb-3">
             <label for="lastName" class="form-label">Apellido</label>
             <input type="text" class="form-control" id="lastName" name="lastName" required value="{{#if editMode}}{{candidato.lastName}}{{/if}}" />
-          </div>
-
-          
+          </div>          
 
           <div class="mb-3">
             <label for="formFile" class="form-label">Seleccione una imagen: </label>
-            <input class="form-control" name="img" type="file" id="formFile" {{#if editMode}}{{else}}required{{/if}}>
+            <input class="form-control" name="img" type="file" id="formFile" {{#if editMode}} {{else}} required {{/if}}>
           </div>
 
           <div class="mb-3">

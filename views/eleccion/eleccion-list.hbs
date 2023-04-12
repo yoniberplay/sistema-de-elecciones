@@ -4,12 +4,19 @@
       <h1 class="fw-light text-white">Sistema de elecciones</h1>
       {{#if canCreateEleccion}} <div class="alert alert-info" role="alert">
         No se permite crear elecciones, si ya existe una eleccion activa
-      </div> {{else}} <a href="/create-eleccion" class="btn btn-primary my-2 ">Crear nueva elección</a> {{/if}}
-      {{!-- <a {{#if canCreateEleccion}} href="#" {{else}} href="/create-eleccion" {{/if}}
-        class="btn btn-primary my-2 ">Crear nueva elección</a> --}}
-      {{#if isAuthenticated}}
-
+      </div> 
+      {{else}} 
+       {{#if thereisCandidatos}}
+  <div class="alert alert-info" role="alert">
+      No existen al menos dos candidatos
+creados y activos.
+      </div> 
+  {{else}}
+     <a href="/create-eleccion" class="btn btn-primary my-2 ">Crear nueva elección</a> 
+  {{/if}}
+     
       {{/if}}
+
     </div>
   </div>
 </section>

@@ -10,7 +10,7 @@
       </div>
       <div class="card-body">
 
-        <form enctype="multipart/form-data" class="needs-validation" novalidate method="POST" action="{{#if editMode}}/edit-ciudadano{{else}}/create-ciudadano{{/if}}">
+        <form enctype="multipart/form-data" class="needs-validation"  method="POST" action="{{#if editMode}}/edit-ciudadano{{else}}/create-ciudadano{{/if}}">
           <div class="mb-3">
             <label for="name" class="form-label">Nombre</label>
             <input type="text" class="form-control" id="name" name="name" required value="{{#if editMode}}{{ciudadano.name}}{{/if}}" />
