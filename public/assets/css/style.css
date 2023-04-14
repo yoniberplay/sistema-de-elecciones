@@ -22,7 +22,8 @@
 }
 
 body{
-  background-color: #000;
+  background: rgb(22,22,22);
+  background: linear-gradient(180deg, rgba(22,22,22,1) 17%, rgba(36,36,36,1) 41%, rgba(45,45,45,1) 82%);
 }
 
 
@@ -41,4 +42,8 @@ body{
 .img-partido-detalle {
   width: 200px;
 }
+
+
+
+
 
