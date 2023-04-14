@@ -43,13 +43,21 @@ exports.getVotacionPuestosPage = async (req, res, next) => {
   const puestoId = req.params.puestoId;
   const Ciudadano = req.session.ciudadano;
 
-//! AGREGAR LA ELECCIONACTIVA Y TODOS CANDIDATOS CON SUS PARTIDOS
+//! 
   let candidatos;
   let puesto;
   try {
     puesto = await Puesto.findOne({where: {Id: puestoId}});
-    candidatos = await Candidato.findAll({where: {PuestoId: puestoId}});
-    candidatos = candidatos.map((result) => result.dataValues);
+
+    candidatos = await Candidato.findAll({include: { all: true } , where: {PuestoId: puestoId}});
+
+    candidatos = candidatos.map((result) => {
+      let temp = {...result.dataValues};
+      temp.Puesto = temp.Puesto.dataValues;
+      temp.Partido = temp.Partido.dataValues;
+      return temp;
+    });
+    console.log(candidatos)
   } catch (error) {
     console.error('Error:', error);
   }
@@ -58,7 +66,7 @@ exports.getVotacionPuestosPage = async (req, res, next) => {
     votacionActive: true,
     candidato: candidatos,
     ciudadano: Ciudadano,
-    puesto: puesto.name,
+    // puesto: puesto.name,
   });
 };
 // exports.puestosNoVotadosCiudadano = (req, res) => {
@@ -107,7 +115,6 @@ exports.PostAddVotacion = (req, res, next) => {
   const PuestoId = req.body.PuestoId;
   const CiudadanoId = req.session.ciudadano.Id;
   const EleccionesId = req.session.eleccion.Id;
-
   Votos.create({
     CandidatoId: CandidatoId,
     PuestoId: PuestoId,

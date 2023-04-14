@@ -7,6 +7,10 @@
   border-width: medium;  
 }
 
+.btnvoto{
+  font-weight: bold;
+}
+
 .margin-top-2{
     margin-top: 2%;
 }
@@ -18,7 +22,7 @@
 .img-size{
   width: 100%;
   height: 300px;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 body{
