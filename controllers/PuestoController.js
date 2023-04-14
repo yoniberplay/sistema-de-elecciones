@@ -24,7 +24,7 @@ exports.GetPuestoList = (req, res, next) => {
 exports.GetCreatePuesto = (req, res, next) => {
 
   const EleccionActiva = Eleccion.findOne({raw: true, where: {status: true}})
-  
+  console.log(EleccionActiva)
   //? No se puede crear si no hay una eleccion activa
   if (!EleccionActiva) {
     req.flash("errors", "No se puede crear puestos ya que no hay una eleccion activa en el sistema");
@@ -43,9 +43,9 @@ exports.PostCreatePuesto = async (req, res, next) => {
   const description = req.body.description;
   const status = true;
 
-  const activeEleccion = await Eleccion.findOne({ raw: true, where: {status: true}})
+  // const activeEleccion = await Eleccion.findOne({ raw: true, where: {status: true}})
 
-  Puesto.create({ name: name, description: description, status: status, eleccionId: activeEleccion.Id })
+  Puesto.create({ name: name, description: description, status: status })
     .then((result) => {
       res.redirect("/puesto");
     })
