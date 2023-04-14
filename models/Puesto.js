@@ -19,10 +19,6 @@ const Puesto = sequelize.define("Puesto", {
   status: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
-  },
-  eleccionId: {
-    type: DataTypes.INTEGER,
-    allowNull: false
   }
 });
 

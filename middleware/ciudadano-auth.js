@@ -12,8 +12,8 @@ exports.ciudadanoAuth = (req, res, next) => {
 exports.votingCiudadanoTracking = async (req, res, next) => {
   const Ciudadano = req.session.ciudadano
   //! SE DEBE VALIDAR QUE EL VOTO Y EL PUESTO SEA DE LA SELECCION EN CURSO
-  const Votos = await Voto.findAll({raw: true, where: {CiudadanoId: Ciudadano.Id}})
-  const Puestos = await Puesto.findAll({raw: true})
+  const Votos = await Voto.findAll({raw: true, where: {CiudadanoId: Ciudadano.Id}});
+  const Puestos = await Puesto.findAll({raw: true});
   let hasPuestos = true;
   if( Puestos.length <= 0 ){
     hasPuestos = false;
@@ -22,7 +22,7 @@ exports.votingCiudadanoTracking = async (req, res, next) => {
   if( Votos.length <= 0 ){
     hasVotos = false;
   } 
-  
+    
   //? mi logica es recorrer en un bucle anidado los votos que tiene el ciudadano
   //? y mapear los puestos a los que no ha votado asi puedo elegir que puesto votara 
   //? a continuacion

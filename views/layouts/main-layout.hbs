@@ -1,6 +1,5 @@
 <html lang="en">
 
-
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -15,12 +14,12 @@
   {{/if}}
   <title>{{pageTitle}}</title>
 
-  {{#if votacionActive}} 
+  {{!-- {{#if votacionActive}} 
   <script src="/assets/js/site/votacion.js" async></script>
   <script src="/assets/js/site/votacionComponents/printCandidato.js" async></script>
   <script src="/assets/js/site/votacionComponents/printCandidatos.js" async></script>
   <script src="/assets/js/site/votacionComponents/printPuestos.js" async></script>
-  {{/if}}
+  {{/if}} --}}
 </head>
 
 <body>
@@ -90,9 +89,10 @@
 
   <main class="col-12 px-1 py-1 px-lg-0 py-lg-0 col-lg-12">
 
-    {{#if hasErrorMessages}}
+<section class="py-5 text-center  d-flex justify-content-center align-items-center">
+  {{#if hasErrorMessages}}
 
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <div class="alert alert-danger alert-dismissible fade show w-50" role="alert">
       <ul>
         {{#each errorMessages}}
         <li>{{this}}</li>
@@ -105,7 +105,7 @@
 
     {{#if hasSuccessMessages}}
 
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <div class="alert alert-success alert-dismissible fade show w-50" role="alert">
       <ul>
         {{#each successMessages}}
         <li>{{this}}</li>
@@ -115,6 +115,8 @@
     </div>
 
     {{/if}}
+</section>
+    
 
     {{{body}}}
 
@@ -125,8 +127,9 @@
     integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   <script src="/assets/js/sweetAlert.js"></script>
 
-  {{#if homeActive}}
-  <script src="/assets/js/site/index.js"></script>{{/if}}
+  {{!-- {{#if homeActive}}
+  <script src="/assets/js/site/index.js"></script>
+  {{/if}} --}}
 
 </body>
 

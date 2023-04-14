@@ -12,12 +12,12 @@
         <form enctype="multipart/form-data" method="POST" action="{{#if editMode}}/edit-eleccion{{else}}/create-eleccion{{/if}}">
           <div class="mb-3">
             <label for="name" class="form-label">Nombre</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{#if editMode}}{{eleccion.name}}{{/if}}" />
+            <input required type="text" class="form-control" id="name" name="name" value="{{#if editMode}}{{eleccion.name}}{{/if}}" />
           </div>
 
           <div class="mb-3">
             <label for="fechaRealizacion" class="form-label">Fecha</label>
-            <input type="date" class="form-control" id="fechaRealizacion" name="fechaRealizacion" value="{{#if editMode}}{{eleccion.fechaRealizacion}}{{/if}}" />
+            <input required type="date" class="form-control" id="fechaRealizacion" name="fechaRealizacion" value="{{#if editMode}}{{eleccion.fechaRealizacion}}{{/if}}" />
           </div>
 
 
