@@ -1,28 +1,26 @@
  <h2 class="text-center text-info ">Listado de candidatos disponibles para el puesto de {{puesto}}</h2>
 
+ <div class="row">
 {{#each candidato as |candidato|}}
 
-          <div class="card col-md-3">
+          <div class="card col-md-3 m-2">
             <img src="{{candidato.imgPerfil}}" class="card-img-top img-size" alt="{{candidato.name}}">
             <div class="card-body">
-              <h5 class="card-title">{{candidato.name}}&nbsp;{{candidato.lastName}}</h5>
-              <h6 class="card-subtitle mb-2">{{candidato.Puesto.dataValues.name}}</h6>
-              <h6 class="card-subtitle mb-2 text-muted">{{candidato.Partido.dataValues.name}}</h6>
-              <h6 class="card-subtitle mb-2 text-muted">{{candidato.status}}</h6>
-              {{!-- <h6 class="card-subtitle mb-2 text-muted">Id: {{candidato.Id}}</h6> --}}
-              
-              
-              {{!-- <a
-                href="/edit-candidato/{{candidato.Id}}?edit=true"
-                class="btn btn-warning"
-              >{{../ciudadano.name}}</a> --}}
+              <h5 class="card-title text-center">{{candidato.name}}&nbsp;{{candidato.lastName}}</h5>
+              <h6 class="card-subtitle mb-2 text-center">{{candidato.Puesto.name}}</h6>
+              <h6 class="card-subtitle mb-2 text-muted text-center">{{candidato.Partido.dataValues.name}}</h6>
+<div class="d-flex align-items-center flex-column"> 
+   <img src="{{candidato.Partido.imgLogo}}" class="" height="50" alt="{{candidato.Partido.name}}">
+</div>
+   <h5 class="card-title text-center">{{candidato.Partido.name}}</h5>
 
-              <form class="form-inline form-delete" action="/votar" method="post">
-                <input type="hidden" name="candidatoId" value="{{candidato.Id}}" />
+              <form class="" action="/votar" method="post">
+                <input type="hidden" name="CandidatoId" value="{{candidato.Id}}" />
                 <input type="hidden" name="PuestoId" value="{{candidato.Id}}" />
                 <input type="hidden" name="CiudadanoId" value="{{candidato.Id}}" />
                 <input type="hidden" name="EleccionesId" value="{{candidato.Id}}" />
-                <button type="submit" class="btn btn-danger delete-heroes">Eliminar</button>
+                <button type="submit" class="btn btn-info text-white  w-100"><span class="btnvoto">Votar</span></button>
+                
 
               </form>
 
@@ -30,3 +28,4 @@
           </div>
 
         {{/each}}
+        </div>
