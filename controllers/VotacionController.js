@@ -4,44 +4,83 @@ const Puesto = require("../models/Puesto");
 const Eleccion = require("../models/Elecciones");
 const Votos = require("../models/Votos");
 
-exports.getPage = (req, res) => {
-  res.render("ciudadano/votacion", {
-    pageTitle: "Votacion",
-  });
-};
+// exports.getPage = (req, res) => {
+//   res.render("ciudadano/votacion", {
+//     pageTitle: "Votacion",
+//   });
+// };
 
-exports.getVotacionPage = (req, res, next) => {
+exports.getVotacionPage = async (req, res, next) => {
   if (!req.session.eleccion) {
     req.flash("errors", "No hay ninguna eleccion activa.");
   }
+  let puestos;
+  try {
+    puestos = await Puesto.findAll();
+    puestos = puestos.map((result) => result.dataValues);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+
+
   res.status(200).render("ciudadano/votacion", {
     pageTitle: "Votacion",
     ciudadano: req.ciudadano.dataValues,
     eleccion: req.session.eleccion,
+    puestos: puestos,
     votacionActive: true,
   });
 };
 
-exports.puestosNoVotadosCiudadano = (req, res) => {
-  const PuestosNoVotados = req.session.puestosNoVotados;
-  let hasPuestos = req.session.hasPuestos;
-  let hasVotos = req.session.hasVotos;
-  if (!PuestosNoVotados || PuestosNoVotados.length < 1) {
-    return res.json({
-      ok: true,
-      hasPuestos: hasPuestos,
-      hasVotos:hasVotos,
-      mensaje: "No hay puestos por votar",
-    });
+
+
+exports.getVotacionPuestosPage = async (req, res, next) => {
+
+  if (!req.session.eleccion) {
+    req.flash("errors", "No hay ninguna eleccion activa.");
   }
 
-  return res.json({
-    ok: true,
-    hasPuestos: hasPuestos,
-    hasVotos:hasVotos,
-    PuestosNoVotados,
+  const puestoId = req.params.puestoId;
+  const Ciudadano = req.session.ciudadano;
+
+//! AGREGAR LA ELECCIONACTIVA Y TODOS CANDIDATOS CON SUS PARTIDOS
+  let candidatos;
+  let puesto;
+  try {
+    puesto = await Puesto.findOne({where: {Id: puestoId}});
+    candidatos = await Candidato.findAll({where: {PuestoId: puestoId}});
+    candidatos = candidatos.map((result) => result.dataValues);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+  res.status(200).render("ciudadano/votacion-puesto", {
+    pageTitle: `${puesto.name} Votacion`,
+    votacionActive: true,
+    candidato: candidatos,
+    ciudadano: Ciudadano,
+    puesto: puesto.name,
   });
 };
+// exports.puestosNoVotadosCiudadano = (req, res) => {
+//   const PuestosNoVotados = req.session.puestosNoVotados;
+//   let hasPuestos = req.session.hasPuestos;
+//   let hasVotos = req.session.hasVotos;
+//   if (!PuestosNoVotados || PuestosNoVotados.length < 1) {
+//     return res.json({
+//       ok: true,
+//       hasPuestos: hasPuestos,
+//       hasVotos:hasVotos,
+//       mensaje: "No hay puestos por votar",
+//     });
+//   }
+
+//   return res.json({
+//     ok: true,
+//     hasPuestos: hasPuestos,
+//     hasVotos:hasVotos,
+//     PuestosNoVotados,
+//   });
+// };
 
 exports.GetCandidatoList = async (req, res, next) => {
   const puestoId = req.params.puestoId;
