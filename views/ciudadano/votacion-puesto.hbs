@@ -1,18 +1,21 @@
  <h2 class="text-center text-info ">Listado de candidatos disponibles para el puesto de {{puesto}}</h2>
 
- <div class="row">
+ <div class="album py-5">
+  <div class="container">
+
+     <div class="row">
 {{#each candidato as |candidato|}}
 
-          <div class="card col-md-3 m-2">
+          <div class="card bg-dark text-white col-md-3">
             <img src="{{candidato.imgPerfil}}" class="card-img-top img-size" alt="{{candidato.name}}">
             <div class="card-body">
               <h5 class="card-title text-center">{{candidato.name}}&nbsp;{{candidato.lastName}}</h5>
               <h6 class="card-subtitle mb-2 text-center">{{candidato.Puesto.name}}</h6>
               <h6 class="card-subtitle mb-2 text-muted text-center">{{candidato.Partido.dataValues.name}}</h6>
-<div class="d-flex align-items-center flex-column"> 
-   <img src="{{candidato.Partido.imgLogo}}" class="" height="50" alt="{{candidato.Partido.name}}">
-</div>
-   <h5 class="card-title text-center">{{candidato.Partido.name}}</h5>
+              <div class="d-flex align-items-center flex-column"> 
+                <img src="{{candidato.Partido.imgLogo}}" class="" height="50" alt="{{candidato.Partido.name}}">
+              </div>
+              <h5 class="card-title text-center">{{candidato.Partido.name}}</h5>
 
               <form class="" action="/votar" method="post">
                 <input type="hidden" name="CandidatoId" value="{{candidato.Id}}" />
@@ -29,3 +32,6 @@
 
         {{/each}}
         </div>
+
+  </div>
+</div>

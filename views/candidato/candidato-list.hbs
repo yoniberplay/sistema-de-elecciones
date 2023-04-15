@@ -20,7 +20,7 @@
         {{#each candidato as |candidato|}}
 
           <div class="card bg-dark text-white col-md-3">
-            <img src="{{candidato.imgPerfil}}" class="card-img-top img-size" alt="{{candidato.name}}">
+            <img src="{{candidato.imgPerfil}}" class="img-size" alt="{{candidato.name}}">
             <div class="card-body">
               <h5 class="card-title">{{candidato.name}}&nbsp;{{candidato.lastName}}</h5>
               <h6 class="card-subtitle mb-2">{{candidato.Puesto.dataValues.name}}</h6>
@@ -50,7 +50,7 @@
 
       {{else}}
 
-        <h1>no hay candidatos creados</h1>
+        <h1 class="fw-light text-white">no hay candidatos creados</h1>
 
       {{/if}}
 

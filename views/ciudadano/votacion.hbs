@@ -2,11 +2,18 @@
 
 <div class="d-flex align-items-center flex-column">
     
-    <h1 class="text-white text-center" id="textToDo">Votacion</h1>
+    <h1 class="text-white text-center" id="textToDo">Votación</h1>
     <h3 class="text-center text-info mb-3">Puestos disponibles para votar</h3>
-    {{#each puestos  as |p|}}
-    <a href="/votar/{{p.Id}}" class="btn btn-primary btn-lg my-1">{{p.name}}</a>
+    <div>
+      {{#each puestos  as |p|}}
+        <div class="c">
+          <a href="/votar/{{p.Id}}" class="">
+            <img src="https://st.depositphotos.com/1004388/3924/v/450/depositphotos_39246233-stock-illustration-silhouette-of-politician.jpg" alt="candidato">
+          <samp>{{p.name}}</samp>
+          </a>
+        </div>
       {{/each}}
+    <div>
         
        
 </div>
