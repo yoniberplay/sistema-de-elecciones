@@ -3,9 +3,9 @@
     <div class="col-lg-6 col-md-8 mx-auto">
       <h1 class="fw-light text-white">Mantenimiento de ciudadano</h1>
       <a href="/create-ciudadano" class="btn btn-primary my-2">Crear nuevo ciudadano</a>
-        {{#if isAuthenticated}}
-        
-        {{/if}}
+      {{#if isAuthenticated}}
+
+      {{/if}}
     </div>
   </div>
 </section>
@@ -16,54 +16,70 @@
     <div class="row">
 
       {{#if hasCiudadano}}
-          <table class="table text-white">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Nombre</th>
-                <th scope="col">Apellidos</th>
-                <th scope="col">Cedula</th>
-                <th scope="col">Email</th>
-                <th scope="col">Estado</th>
-                <th scope="col">Editar</th>
-                <th scope="col">Eliminar</th>
-              </tr>
-            </thead>
-            <tbody>
-          {{#each ciudadano as |ciudadano|}}
-            <tr>
-              <th scope="row">{{ciudadano.Id}}</th>
-              <td>{{ciudadano.name}}</td>
-              <td>{{ciudadano.lastName}}</td>
-              <td>{{ciudadano.IdDoc}}</td>
-              <td>{{ciudadano.email}}</td>
-              <td>{{ciudadano.status}}</td>
-              <td>
-                <a href="/edit-ciudadano/{{ciudadano.Id}}?edit=true" class="btn btn-warning">Editar</a>
-              </td>
-              <td>
-                <form class="form-inline form-delete" action="/delete-ciudadano" method="post">
-                  <input type="hidden" name="ciudadanoId" value="{{ciudadano.Id}}" />
-                  <button type="submit" class="btn btn-danger delete-ciudadano">Eliminar</button>
-                </form>
-              </td>
-            </tr>
-          {{/each}}
-            </tbody>
-          </table>
-          
-            {{#if ../isAuthenticated}}
-            
+      <table class="table text-white">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Apellidos</th>
+            <th scope="col">Cedula</th>
+            <th scope="col">Email</th>
+            <th scope="col">Estado</th>
+            {{#if hasEleccionActive}}
+
+            {{else}}
+            <th scope="col">Editar</th>
+            <th scope="col">Eliminar</th>
             {{/if}}
-            </div>
-          </div>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each ciudadano as |ciudadano|}}
+          <tr>
+            <th scope="row">{{ciudadano.Id}}</th>
+            <td>{{ciudadano.name}}</td>
+            <td>{{ciudadano.lastName}}</td>
+            <td>{{ciudadano.IdDoc}}</td>
+            <td>{{ciudadano.email}}</td>
+              <td>{{#if puesto.status}}Activo{{else}}Inactivo{{/if}}</td>
+            {{#if ../hasEleccionActive}}
 
-      {{else}}
+            {{else}}
+            <td>
+              <a href="/edit-ciudadano/{{ciudadano.Id}}?edit=true" class="btn btn-warning">Editar</a>
+            </td>
+            <td>
+              {{#if ciudadano.status}}
+              <form class="form-inline form-delete" action="/delete-ciudadano" method="post">
+                <input type="hidden" name="ciudadanoId" value="{{ciudadano.Id}}" />
+                <button type="submit" class="btn btn-danger delete-ciudadano">Inactivar</button>
+              </form>
+            </td>
+            {{else}}
+            <form class="form-inline" action="/activar-ciudadano" method="post">
+              <input type="hidden" name="ciudadanoId" value="{{ciudadano.Id}}" />
+              <button type="submit" class="btn btn-success ">Activar</button>
+            </form>
+            {{/if}}
+            {{/if}}
 
-        <h1 class="fw-light text-white">no hay ciudadanos creados</h1>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+      {{#if ../isAuthenticated}}
 
       {{/if}}
-
     </div>
   </div>
+
+  {{else}}
+
+  <h1 class="fw-light text-white">no hay ciudadanos creados</h1>
+
+  {{/if}}
+
+</div>
+</div>
 </div>

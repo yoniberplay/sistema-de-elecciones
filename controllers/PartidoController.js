@@ -2,14 +2,17 @@ const Partido = require("../models/Partido");
 const Eleccion = require("../models/Elecciones");
 
 exports.GetPartidoList = (req, res, next) => {
-  Partido.findAll()
-    .then((result) => {
-      let partido = result.map((result) => result.dataValues);
+  Promise.all([
+    Eleccion.findOne({ where: { status: true } }),
+    Partido.findAll(),
+  ])
+    .then(([eleccion, partido]) => {
       res.render("partido/partido-list", {
         pageTitle: "Partido",
         partidoActive: true,
-        partido: partido,
+        partido: partido.map((result) => result.dataValues),
         hasPartido: partido.length > 0,
+        hasEleccionActive: eleccion ? true : false,
       });
     })
     .catch((err) => {
@@ -18,6 +21,23 @@ exports.GetPartidoList = (req, res, next) => {
         mensaje: err,
       });
     });
+
+  // Partido.findAll()
+  //   .then((result) => {
+  //     let partido = result.map((result) => result.dataValues);
+  //     res.render("partido/partido-list", {
+  //       pageTitle: "Partido",
+  //       partidoActive: true,
+  //       partido: partido,
+  //       hasPartido: partido.length > 0,
+  //     });
+  //   })
+  //   .catch((err) => {
+  //     res.render("Error/ErrorInterno", {
+  //       pageTitle: "Error Interno",
+  //       mensaje: err,
+  //     });
+  //   });
 };
 
 exports.GetCreatePartido = (req, res, next) => {
@@ -54,7 +74,7 @@ exports.PostCreatePartido = (req, res, next) => {
 exports.GetEditPartido = (req, res, next) => {
   const edit = req.query.edit;
   const partidoId = req.params.partidoId;
-  
+
   if (!edit) {
     return res.redirect("/partido");
   }
@@ -88,9 +108,8 @@ exports.PostEditPartido = (req, res, next) => {
 
   Partido.findOne({ where: { Id: partidoId } })
     .then((result) => {
-
       const bk = result.dataValues;
-      
+
       if (!bk) {
         return res.redirect("/partido");
       }
@@ -125,12 +144,18 @@ exports.PostEditPartido = (req, res, next) => {
 exports.PostConfirmDeletePartido = (req, res, next) => {
   const partidoId = req.body.partidoId;
 
-  const EleccionActiva = Eleccion.findOne({raw: true, where: {status: true}})
-  
+  const EleccionActiva = Eleccion.findOne({
+    raw: true,
+    where: { status: true },
+  });
+
   //? No se puede eliminar si hay una eleccion
   if (EleccionActiva) {
-    req.flash("errors", "No se puede eliminar el Partido ya que hay una eleccion activa en el sistema");
-    return res.redirect("/user")
+    req.flash(
+      "errors",
+      "No se puede eliminar el Partido ya que hay una eleccion activa en el sistema"
+    );
+    return res.redirect("/user");
   }
 
   Partido.findOne({ where: { Id: partidoId } })
@@ -157,6 +182,28 @@ exports.PostDeletePartido = (req, res, next) => {
 
   //! NO SE PUEDEN ELIMINAR NADA SOLO MOSTRAR O NO EN BASE A SU ESTATUS
   Partido.update({ status: false }, { where: { Id: partidoId } })
+    .then((result) => {
+      return res.redirect("/partido");
+    })
+    .catch((err) => {
+      res.render("Error/ErrorInterno", {
+        pageTitle: "Error Interno",
+        mensaje: err,
+      });
+    });
+};
+
+exports.PostActivarPartido = async (req, res, next) => {
+  const partidoId = req.body.partidoId;
+
+  const partidoFound = await Partido.findByPk(partidoId);
+
+  if (!partidoFound) {
+    req.flash("errors", "Ese partido no fue encontrado en el sistema");
+    return res.redirect("/partido");
+  }
+  //*ACTIVANDO CANDIDATO
+  Partido.update({ status: true }, { where: { Id: partidoId } })
     .then((result) => {
       return res.redirect("/partido");
     })

@@ -14,6 +14,7 @@ const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");
 const session = require("express-session");
 const flash = require("connect-flash");
+require("dotenv").config();
 
 //? Mejor manejo de rutas
 const authRouter = require("./routes/auth");
@@ -23,8 +24,7 @@ const eleccionesRoute = require("./routes/eleccionesRoute");
 const partidoRoute = require("./routes/partidoRoute");
 const puestoRoute = require("./routes/puestoRoute");
 const usuarioRouter = require("./routes/usuarioRouter");
-const votacionRouter = require('./routes/votacionRouter')
-
+const votacionRouter = require("./routes/votacionRouter");
 
 const errorController = require("./controllers/ErrorController");
 
@@ -52,7 +52,6 @@ app.use(express.urlencoded({ extended: false }));
 
 // Convertir la data recibida por post en un json
 app.use(express.json());
-
 
 //Hacer los datos de la dentro de la carpeta public e images publicos
 // app.use("/public",express.static(path.join(__dirname, "public")));
@@ -95,36 +94,33 @@ app.use((req, res, next) => {
       .catch((err) => {
         console.log(err);
       });
-      //! CREAR CONTROLADOR DE LOGGIN CIUDADANO Y AGREGAR LO QUE SE NECESITARIA AQUI
+    //! CREAR CONTROLADOR DE LOGGIN CIUDADANO Y AGREGAR LO QUE SE NECESITARIA AQUI
   } else if (req.session.ciudadano) {
     Ciudadano.findByPk(req.session.ciudadano.Id)
       .then((ciudadano) => {
         req.ciudadano = ciudadano;
         //! agregar la persistencia de eleccion que viene en la session
-        // console.log(ciudadano.dataValues);   
+        // console.log(ciudadano.dataValues);
 
         next();
       })
       .catch((err) => {
         console.log(err);
       });
-  }else{
+  } else {
     return next();
   }
-  
 });
-
-
 
 //? Con este middleware podemos tener estas propiedades disponibles en
 //? las vistas hbs
 app.use((req, res, next) => {
   const errors = req.flash("errors");
   const success = req.flash("success");
-  
+
   res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.isCiudadano = req.session.ciudadano ? true : false;
-  
+
   res.locals.errorMessages = errors;
   res.locals.hasErrorMessages = errors.length > 0;
 
@@ -145,8 +141,6 @@ app.use(votacionRouter);
 
 app.use(errorController.Get404);
 
-
-
 //? Relaciones de las tablas
 Puesto.hasMany(Candidato);
 Candidato.belongsTo(Puesto, { constraint: true, onDelete: "CASCADE" });
@@ -154,8 +148,8 @@ Partido.hasMany(Candidato);
 Candidato.belongsTo(Partido, { constraint: true, onDelete: "CASCADE" });
 // Elecciones.belongsToMany(Puesto, { through: EleccionPuesto });
 // Puesto.belongsToMany(Elecciones, { through: EleccionPuesto });
-Elecciones.belongsToMany(Ciudadano, { through: Votos});
-Ciudadano.belongsToMany(Elecciones, { through: Votos});
+Elecciones.belongsToMany(Ciudadano, { through: Votos });
+Ciudadano.belongsToMany(Elecciones, { through: Votos });
 
 Votos.belongsTo(Candidato);
 Votos.belongsTo(Ciudadano);
@@ -167,10 +161,13 @@ Ciudadano.hasMany(Votos);
 Puesto.hasMany(Votos);
 Elecciones.hasMany(Votos);
 
+const PORT = process.env.PORT || 5000;
+
 sequelize
   .sync()
   .then((result) => {
-    app.listen(5000);
+    app.listen(PORT);
+    console.log(`Server running on http://localhost:${PORT}`);
   })
   .catch((err) => {
     console.log(err);

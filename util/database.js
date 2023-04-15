@@ -1,16 +1,16 @@
-const {Sequelize} = require("sequelize");
-require('dotenv').config();
+const { Sequelize } = require("sequelize");
+require("dotenv").config();
 
-const ENV_DB_PASSWORD = process.env.DB_PASSWORD
+const ENV_DB_PASSWORD = process.env.DB_PASSWORD || "";
 
 const sequelize = new Sequelize("sistemaElecciones", "root", ENV_DB_PASSWORD, {
   dialect: "mysql",
   host: "localhost",
   port: 3306,
-  logging: true
+  logging: false,
 });
 
-module.exports = sequelize; 
+module.exports = sequelize;
 
 // const Sequelize = require("sequelize");
 // const path = require("path");

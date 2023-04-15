@@ -2,14 +2,17 @@ const Ciudadano = require("../models/Ciudadano");
 const Eleccion = require("../models/Elecciones");
 
 exports.GetCiudadanoList = (req, res, next) => {
-  Ciudadano.findAll()
-    .then((result) => {
-      let ciudadano = result.map((result) => result.dataValues);
+  Promise.all([
+    Eleccion.findOne({ where: { status: true } }),
+    Ciudadano.findAll(),
+  ])
+    .then(([eleccion, ciudadanos]) => {
       res.render("ciudadano/ciudadano-list", {
         pageTitle: "ciudadano",
         ciudadanoActive: true,
-        ciudadano: ciudadano,
-        hasCiudadano: ciudadano.length > 0,
+        ciudadano: ciudadanos.map((result) => result.dataValues),
+        hasCiudadano: ciudadanos.length > 0,
+        hasEleccionActive: eleccion ? true : false,
       });
     })
     .catch((err) => {
@@ -88,10 +91,9 @@ exports.PostEditCiudadano = (req, res, next) => {
   const lastName = req.body.lastName;
   const email = req.body.email;
   const ciudadanoId = req.body.ciudadanoId;
-  
 
   Ciudadano.update(
-    { 
+    {
       name: name,
       IdDoc: IdDoc,
       lastName: lastName,
@@ -113,14 +115,19 @@ exports.PostEditCiudadano = (req, res, next) => {
 exports.PostConfirmDeleteCiudadano = (req, res, next) => {
   const ciudadanoId = req.body.ciudadanoId;
 
-  const EleccionActiva = Eleccion.findOne({raw: true, where: {status: true}})
-  
+  const EleccionActiva = Eleccion.findOne({
+    raw: true,
+    where: { status: true },
+  });
+
   //? No se puede eliminar si hay una eleccion
   if (EleccionActiva) {
-    req.flash("errors", "No se puede eliminar el Ciudadano ya que hay una eleccion activa en el sistema");
-    return res.redirect("/user")
+    req.flash(
+      "errors",
+      "No se puede eliminar el Ciudadano ya que hay una eleccion activa en el sistema"
+    );
+    return res.redirect("/user");
   }
-
 
   Ciudadano.findOne({ where: { Id: ciudadanoId } })
     .then((result) => {
@@ -146,6 +153,28 @@ exports.PostDeleteCiudadano = (req, res, next) => {
 
   //! NO SE PUEDEN ELIMINAR NADA SOLO MOSTRAR O NO EN BASE A SU ESTATUS
   Ciudadano.update({ status: false }, { where: { Id: ciudadanoId } })
+    .then((result) => {
+      return res.redirect("/ciudadano");
+    })
+    .catch((err) => {
+      res.render("Error/ErrorInterno", {
+        pageTitle: "Error Interno",
+        mensaje: err,
+      });
+    });
+};
+
+exports.PostActivarCiudadano = async (req, res, next) => {
+  const ciudadanoId = req.body.ciudadanoId;
+
+  const ciudadanoFound = await Ciudadano.findByPk(ciudadanoId);
+
+  if (!ciudadanoFound) {
+    req.flash("errors", "Ese ciudadano no fue encontrado en el sistema");
+    return res.redirect("/ciudadano");
+  }
+  //*ACTIVANDO CIUDADANO
+  Ciudadano.update({ status: true }, { where: { Id: ciudadanoId } })
     .then((result) => {
       return res.redirect("/ciudadano");
     })
