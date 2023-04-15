@@ -1,7 +1,7 @@
 <section class="py-5 text-center container">
   <div class="row py-lg-5">
     <div class="col-lg-6 col-md-8 mx-auto">
-      <h1 class="fw-light">Sistema de elecciones</h1>
+      <h1 class="fw-light text-white">Mantenimiento de ciudadano</h1>
       <a href="/create-ciudadano" class="btn btn-primary my-2">Crear nuevo ciudadano</a>
         {{#if isAuthenticated}}
         
@@ -10,13 +10,13 @@
   </div>
 </section>
 
-<div class="album py-5 bg-light">
+<div class="album py-5">
   <div class="container">
 
     <div class="row">
 
       {{#if hasCiudadano}}
-          <table class="table table-hover">
+          <table class="table text-white">
             <thead>
               <tr>
                 <th scope="col">#</th>
@@ -60,7 +60,7 @@
 
       {{else}}
 
-        <h1>no hay ciudadanos creados</h1>
+        <h1 class="fw-light text-white">no hay ciudadanos creados</h1>
 
       {{/if}}
 

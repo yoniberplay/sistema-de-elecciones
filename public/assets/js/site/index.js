@@ -20,16 +20,15 @@ $(document).ready(function(){
               }, false)
           })
       })()
-  });
+    });
 
   
-      $('#IdDoc').on('input', function() {
+    $('#IdDoc').on('input', function() {
         var cedula = $(this).val();
         cedula = cedula.replace(/[^0-9-]/g, ''); // Elimina todos los caracteres que no sean números o '-'
         
         $(this).val(cedula);
-      });
-
+    });
 
 
 });

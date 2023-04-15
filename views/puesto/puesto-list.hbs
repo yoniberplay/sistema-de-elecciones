@@ -1,8 +1,8 @@
 <section class="py-5 text-center container">
   <div class="row py-lg-5">
     <div class="col-lg-6 col-md-8 mx-auto">
-      <h1 class="fw-light">Sistema de elecciones</h1>
-      <a href="/create-puesto" class="btn btn-primary my-2">Mantenimiento de puestos</a>
+      <h1 class="fw-light text-white">Mantenimiento de puesto</h1>
+      <a href="/create-puesto" class="btn btn-primary my-2">Crear nuevo puesto</a>
         {{#if isAuthenticated}}
         
         {{/if}}
@@ -10,42 +10,50 @@
   </div>
 </section>
 
-<div class="album py-5 bg-light">
+<div class="album py-5">
   <div class="container">
 
     <div class="row">
 
       {{#if hasPuestos}}
+        <table class="table text-white">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Descripcion</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Editar</th>
+                <th scope="col">Eliminar</th>
+              </tr>
+            </thead>
+            <tbody>
 
         {{#each puestos as |puesto|}}
-
-          <div class="card col-md-3">
-            <div class="card-body">
-              <h5 class="card-title">{{puesto.name}}</h5>
-              <p class="card-text">{{puesto.description}}</p>
-              <p class="card-subtitle mb-2 text-muted">{{puesto.status}}</p>
-              <p class="card-subtitle mb-2 text-muted">Id: {{puesto.Id}}</p>
-                <a
-                  href="/edit-puesto/{{puesto.Id}}?edit=true"
-                  class="btn btn-warning"
-                >Editar</a>
-
-              <form class="form-inline form-delete" action="/delete-puesto" method="post">
-                <input type="hidden" name="puestoId" value="{{puesto.Id}}" />
-                <button type="submit" class="btn btn-danger delete-puesto">Eliminar</button>
-
-              </form>
-               {{#if ../isAuthenticated}}
-             
-              {{/if}}
-            </div>
-          </div>
-
+              <tr>
+                  <th scope="row">{{puesto.Id}}</th>
+                  <td>{{puesto.name}}</td>
+                  <td>{{puesto.description}}</td>
+                  <td>{{puesto.status}}</td>
+                  <td>
+                    <a href="/edit-puesto/{{puesto.Id}}?edit=true" class="btn btn-warning">Editar</a>
+                  </td>
+                  <td>
+                    <form class="form-inline form-delete" action="/delete-puesto" method="post">
+                      <input type="hidden" name="puestoId" value="{{puesto.Id}}" />
+                      <button type="submit" class="btn btn-danger delete-puesto">Eliminar</button>
+                  </form>
+                  </td>
+              </tr>
         {{/each}}
-
+          </tbody>
+          </table>
+            {{#if ../isAuthenticated}}
+             
+            {{/if}}
       {{else}}
 
-        <h1>no hay puestos creados</h1>
+        <h1 class="fw-light text-white">no hay puestos creados</h1>
 
       {{/if}}
 
