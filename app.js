@@ -55,6 +55,7 @@ app.use(express.json());
 
 
 //Hacer los datos de la dentro de la carpeta public e images publicos
+// app.use("/public",express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/images", express.static(path.join(__dirname, "images")));
 
