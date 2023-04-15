@@ -2,10 +2,13 @@
   <div class="row py-lg-5">
     <div class="col-lg-6 col-md-8 mx-auto">
       <h1 class="fw-light text-white">Mantenimiento de candidato</h1>
+      {{#if eleccionActive}}
+      <div class="alert alert-info" role="alert">
+        No se permite crear candidatos, si ya existe una eleccion activa.
+      </div>
+      {{else}}
       <a href="/create-candidato" class="btn btn-primary my-2">Crear nuevo candidato</a>
-        {{#if isAuthenticated}}
-        
-        {{/if}}
+      {{/if}}
     </div>
   </div>
 </section>
@@ -17,40 +20,49 @@
 
       {{#if hasCandidato}}
 
-        {{#each candidato as |candidato|}}
+      {{#each candidatos as |candidato|}}
 
-          <div class="card bg-dark text-white col-md-3">
-            <img src="{{candidato.imgPerfil}}" class="img-size" alt="{{candidato.name}}">
-            <div class="card-body">
-              <h5 class="card-title">{{candidato.name}}&nbsp;{{candidato.lastName}}</h5>
-              <h6 class="card-subtitle mb-2">{{candidato.Puesto.dataValues.name}}</h6>
-              <h6 class="card-subtitle mb-2 text-muted">{{candidato.Partido.dataValues.name}}</h6>
-              <h6 class="card-subtitle mb-2 text-muted">{{candidato.status}}</h6>
-              <h6 class="card-subtitle mb-2 text-muted">Id: {{candidato.Id}}</h6>
-              
-              
-              <a
-                href="/edit-candidato/{{candidato.Id}}?edit=true"
-                class="btn btn-warning"
-              >Editar</a>
+      <div class="card bg-dark text-white col-md-3">
+        <img src="{{candidato.imgPerfil}}" class="img-size" alt="{{candidato.name}}">
+        <div class="card-body">
+          <h5 class="card-title">{{candidato.name}}&nbsp;{{candidato.lastName}}</h5>
+          <h6 class="card-subtitle mb-2"><span class="text-white">Puesto: </span>{{candidato.Puesto.dataValues.name}}
+          </h6>
+          <h6 class="card-subtitle mb-2 text-muted"> <span class="text-white">Partido:
+            </span>{{candidato.Partido.dataValues.name}}
+          </h6>
 
-              <form class="form-inline form-delete" action="/delete-candidato" method="post">
-                <input type="hidden" name="candidatoId" value="{{candidato.Id}}" />
-                <button type="submit" class="btn btn-danger delete-heroes">Eliminar</button>
 
-              </form>
 
-               {{#if ../isAuthenticated}}
-              
-              {{/if}}
-            </div>
-          </div>
+          {{#if ../eleccionActive}}
 
-        {{/each}}
+          {{else}}
+
+            <a href="/edit-candidato/{{candidato.Id}}?edit=true" class="btn btn-warning">Editar</a>
+            {{#if candidato.status}}
+
+            <form class="form-inline form-delete" action="/delete-candidato" method="post">
+              <input type="hidden" name="candidatoId" value="{{candidato.Id}}" />
+              <button type="submit" class="btn btn-danger delete-heroes">Inactivar</button>
+            </form>
+            {{else}}
+
+            <form class="form-inline" action="/activar-candidato" method="post">
+              <input type="hidden" name="candidatoId" value="{{candidato.Id}}" />
+              <button type="submit" class="btn btn-success ">Activar</button>
+            </form>
+
+            {{/if}}
+          {{/if}}
+
+        </div>
+      </div>
+
+      {{/each}}
 
       {{else}}
 
-        <h1 class="fw-light text-white">no hay candidatos creados</h1>
+      <h1 class="fw-light text-white">no hay candidatos creados</h1>
 
       {{/if}}
 

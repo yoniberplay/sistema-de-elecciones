@@ -4,17 +4,17 @@
       <h1 class="fw-light text-white">Mantenimiento de elecciones</h1>
       {{#if canCreateEleccion}} <div class="alert alert-info" role="alert">
         No se permite crear elecciones, si ya existe una eleccion activa
-      </div> 
-      {{else}} 
-       {{#if thereisCandidatos}}
-  <div class="alert alert-info" role="alert">
-      No existen al menos dos candidatos
-creados y activos.
-      </div> 
-  {{else}}
-     <a href="/create-eleccion" class="btn btn-primary my-2 ">Crear nueva elección</a> 
-  {{/if}}
-     
+      </div>
+      {{else}}
+      {{#if thereisCandidatos}}
+      <a href="/create-eleccion" class="btn btn-primary my-2 ">Crear nueva elección</a>
+      {{else}}
+      <div class="alert alert-info" role="alert">
+        No existen al menos dos candidatos
+        creados y activos por cada puesto creado para iniciar la eleccion.
+      </div>
+      {{/if}}
+
       {{/if}}
 
     </div>
@@ -34,8 +34,8 @@ creados y activos.
         <div class="card-body">
           <h5 class="card-title mb-2 text-capitalize">{{eleccion.name}}</h5>
           <h6 class="card-subtitle mb-2">Fecha: {{eleccion.fechaRealizacion}}</h6>
-          <h6 class="card-subtitle text-muted mb-2">Estado: 
-            {{#if eleccion.status}} <span class="text-success fw-bold">Activa</span> 
+          <h6 class="card-subtitle text-muted mb-2">Estado:
+            {{#if eleccion.status}} <span class="text-success fw-bold">Activa</span>
             {{else}}Inactiva {{/if}}
           </h6>
 

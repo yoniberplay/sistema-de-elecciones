@@ -1,15 +1,23 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const PuestoController = require('../controllers/PuestoController');
+const PuestoController = require("../controllers/PuestoController");
 const admintauth = require("../middleware/is-auth");
 
-
-router.get("/puesto",admintauth, PuestoController.GetPuestoList);
+router.get("/puesto", admintauth, PuestoController.GetPuestoList);
 router.get("/create-puesto", admintauth, PuestoController.GetCreatePuesto);
 router.post("/create-puesto", admintauth, PuestoController.PostCreatePuesto);
-router.get("/edit-puesto/:puestoId", admintauth, PuestoController.GetEditPuesto);
+router.get(
+  "/edit-puesto/:puestoId",
+  admintauth,
+  PuestoController.GetEditPuesto
+);
 router.post("/edit-puesto", admintauth, PuestoController.PostEditPuesto);
 router.post("/delete-puesto", admintauth, PuestoController.PostDeletePuesto);
-router.post("/confirm-delete-puesto", admintauth, PuestoController.PostConfirmDeletePuesto);
+router.post(
+  "/confirm-delete-puesto",
+  admintauth,
+  PuestoController.PostConfirmDeletePuesto
+);
+router.post("/activar-puesto", admintauth, PuestoController.PostActivarPuesto);
 
 module.exports = router;

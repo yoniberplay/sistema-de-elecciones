@@ -5,28 +5,48 @@ const Candidato = require("../models/Candidato");
 const Partido = require("../models/Partido");
 const Puesto = require("../models/Puesto");
 
-function myFunction() {
-  alert("Hello! I am an alert box!");
+async function hay2CandidatosPorPuesto() {
+  const candidatos = await Candidato.findAll({
+    raw: true,
+    where: { status: true },
+    include: {
+      model: Puesto,
+      where: { status: true },
+    },
+  });
+
+  // console.log(candidatos);
+
+  const candidatosAgrupados = candidatos.reduce((acc, curr) => {
+    const puestoName = curr["Puesto.name"];
+    if (!acc[puestoName]) {
+      acc[puestoName] = [];
+    }
+    acc[puestoName].push(curr);
+    return acc;
+  }, {});
+
+  let hay2CandidatosPorPuesto = true;
+
+  for (const puesto in candidatosAgrupados) {
+    if (candidatosAgrupados[puesto].length < 3) {
+      hay2CandidatosPorPuesto = false;
+      break;
+    }
+  }
+
+  return hay2CandidatosPorPuesto;
 }
 
-exports.GetEleccionesList = (req, res, next) => {
+exports.GetEleccionesList = async (req, res, next) => {
+  let thereisCandidatos = await hay2CandidatosPorPuesto();
+  // console.log(thereisCandidatos);
 
-  let thereisCandidatos;
-  Candidato.findAll({ where: { status: true } })
-  .then(users => {
-    thereisCandidatos = users.length >= 2 ? false : true;
-  })
-  .catch(error => {
-    console.error(error);
-  });
-  
   Elecciones.findAll()
     .then((result) => {
-      
       let eleccion = result
         .map((result) => result.dataValues)
         .sort((a, b) => b.status - a.status);
-
 
       let canCreateEleccion = eleccion.find((e) => e.status === true);
       res.render("eleccion/eleccion-list", {
@@ -54,9 +74,9 @@ exports.GetCreateEleccion = (req, res, next) => {
   });
 };
 
-exports.PostCreateEleccion = (req, res, next) => {
+exports.PostCreateEleccion = async (req, res, next) => {
   const name = req.body.name;
-  const fechaRealizacion = req.body.fechaRealizacion;
+  const fechaRealizacion = req.body.fechaRealizacion || Date.now();
   const status = true;
 
   Elecciones.create({

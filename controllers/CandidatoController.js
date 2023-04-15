@@ -1,33 +1,24 @@
 const Candidato = require("../models/Candidato");
 const Partido = require("../models/Partido");
 
-const Puesto = require("../models/Puesto")
-const Eleccion = require("../models/Elecciones")
-
+const Puesto = require("../models/Puesto");
+const Eleccion = require("../models/Elecciones");
 
 exports.GetCandidatoList = (req, res, next) => {
-  Candidato.findAll({include: [{ model: Partido }, { model: Puesto }]})
-    .then((result) => {
-      let candidato = result.map((result) => result.dataValues);
-
-      Partido.findAll()
-        .then((result) => {
-          let partido = result.map((result) => result.dataValues);
-
-          Puesto.findAll()
-          .then((result) => {   
-            let puestos = result.map((result) => result.dataValues);
-
-            res.render("candidato/candidato-list", {
-              pageTitle: "candidato",
-              candidatoActive: true,
-              candidato: candidato,
-              partido: partido,
-              puestos: puestos,
-              hasCandidato: candidato.length > 0,
-            });
-          });
-        });
+  Promise.all([
+    Candidato.findAll({
+      include: [{ model: Partido }, { model: Puesto }],
+    }),
+    Eleccion.findOne({ raw: true, where: { status: true } }),
+  ])
+    .then(([candidatos, eleccion]) => {
+      res.render("candidato/candidato-list", {
+        pageTitle: "candidato",
+        candidatoActive: true,
+        candidatos: candidatos.map((p) => p.dataValues),
+        hasCandidato: candidatos.length > 0,
+        eleccionActive: eleccion ? true : false,
+      });
     })
     .catch((err) => {
       res.render("Error/ErrorInterno", {
@@ -37,66 +28,54 @@ exports.GetCandidatoList = (req, res, next) => {
     });
 };
 
+async function insertDefaultCandidate() {
+  const puestos = await Puesto.findAll({ raw: true, where: { status: true } });
 
-const validationsBeforeCreate = async (req, res, next) => {
+  if (puestos) {
+    for (puestoIndex in puestos) {
+      const puestoId = puestos[puestoIndex]?.Id;
+      const candidato = await Candidato.findOne({
+        where: { name: "NINGUNO", puestoId: puestoId },
+      });
 
-  const PartidoActivo = await Partido.findOne({raw: true, where: {status: true}});
-  
-  if (!PartidoActivo) {
-    return {status: false, message: "Debe existing al menos 1 partido creado en el sistema"};
+      if (!candidato) {
+        await Candidato.create({
+          name: "NINGUNO",
+          lastName: "NINGUNO",
+          status: true,
+          PartidoId: 1,
+          PuestoId: puestoId,
+          imgPerfil: "/",
+        });
+      }
+    }
   }
-  
-  const PuestoActivo = await Puesto.findOne({raw: true, where: {status: true}});
-
-  if (!PuestoActivo) {
-    return {status: false, message: "Debe existir al menos 1 puesto activo  en el sistema"};
-
-  }
-
-  return true;
-
 }
-
 exports.GetCreateCandidato = async (req, res, next) => {
+  try {
+    const [partidos, puestos] = await Promise.all([
+      Partido.findAll({ raw: true, where: { status: true } }),
+      Puesto.findAll({ raw: true, where: { status: true } }),
+    ]);
 
-  let partido;
-  Partido.findAll({ where: { status: true } })
-  .then(p => {
-    partido = p.map((result) => result.dataValues);
-    console.log(partido);
-  })
-  .catch(error => {
-    console.error(error);
-  });
+    await insertDefaultCandidate();
 
-  let puestos;
-  Puesto.findAll({ where: { status: true } })
-  .then(p => {
-    puestos = p.map((result) => result.dataValues);
-    console.log(puestos);
-  })
-  .catch(error => {
-    console.error(error);
-  });
-
-
-  const isValid = await validationsBeforeCreate();
-  if (isValid) {
-    res.render("candidato/save-candidato", {
+    return res.render("candidato/save-candidato", {
       pageTitle: "Create candidato",
       candidatoActive: true,
       editMode: false,
-      partido: partido,
+      partido: partidos,
       puestos: puestos,
       hasPuestos: puestos.length > 0,
-      hasPartido: partido.length > 0,
+      hasPartido: partidos.length > 0,
     });
-  } else {
-    req.flash("errors", isValid.message)
-
-    return res.redirect("/admin");
+  } catch (err) {
+    console.log(err);
+    res.render("Error/ErrorInterno", {
+      pageTitle: "Error",
+      mensaje: err,
+    });
   }
- 
 };
 
 exports.PostCreateCandidato = (req, res, next) => {
@@ -141,26 +120,24 @@ exports.GetEditCandidato = (req, res, next) => {
       if (!candidato) {
         return res.redirect("/candidato");
       }
-      Partido.findAll()
-        .then((result) => {
-          let partido = result.map((result) => result.dataValues);
+      Partido.findAll().then((result) => {
+        let partido = result.map((result) => result.dataValues);
 
-          Puesto.findAll()
-            .then((result) => {   
-              let puestos = result.map((result) => result.dataValues);
+        Puesto.findAll().then((result) => {
+          let puestos = result.map((result) => result.dataValues);
 
-                res.render("candidato/save-candidato", {
-                  pageTitle: "Edit candidato",
-                  candidatoActive: true,
-                  editMode: edit,
-                  candidato: candidato,
-                  partido: partido,
-                  puestos: puestos,
-                  hasCandidato: candidato.length > 0,
-                  hasPuestos: puestos.length > 0,
-                  hasPartido: partido.length > 0,
-                });
+          res.render("candidato/save-candidato", {
+            pageTitle: "Edit candidato",
+            candidatoActive: true,
+            editMode: edit,
+            candidato: candidato,
+            partido: partido,
+            puestos: puestos,
+            hasCandidato: candidato.length > 0,
+            hasPuestos: puestos.length > 0,
+            hasPartido: partido.length > 0,
           });
+        });
       });
     })
     .catch((err) => {
@@ -181,9 +158,8 @@ exports.PostEditCandidato = (req, res, next) => {
 
   Candidato.findOne({ where: { Id: candidatoId } })
     .then((result) => {
-
       const bk = result.dataValues;
-      
+
       if (!bk) {
         return res.redirect("/");
       }
@@ -194,7 +170,7 @@ exports.PostEditCandidato = (req, res, next) => {
           PartidoId: PartidoId,
           lastName: lastName,
           PuestoId: PuestoId,
-          imgPerfil: imagePath
+          imgPerfil: imagePath,
         },
         { where: { Id: candidatoId } }
       )
@@ -216,12 +192,18 @@ exports.PostEditCandidato = (req, res, next) => {
 exports.PostConfirmDeleteCandidato = (req, res, next) => {
   const candidatoId = req.body.candidatoId;
 
-  const EleccionActiva = Eleccion.findOne({raw: true, where: {status: true}})
-  
+  const EleccionActiva = Eleccion.findOne({
+    raw: true,
+    where: { status: true },
+  });
+
   //? No se puede eliminar si hay una eleccion
   if (EleccionActiva) {
-    req.flash("errors", "No se puede eliminar el candidato ya que hay una eleccion activa en el sistema");
-    return res.redirect("/user")
+    req.flash(
+      "errors",
+      "No se puede eliminar el candidato ya que hay una eleccion activa en el sistema"
+    );
+    return res.redirect("/user");
   }
 
   Candidato.findOne({ where: { Id: candidatoId } })
@@ -248,6 +230,27 @@ exports.PostDeleteCandidato = (req, res, next) => {
 
   //! NO SE PUEDEN ELIMINAR NADA SOLO MOSTRAR O NO EN BASE A SU ESTATUS
   Candidato.update({ status: false }, { where: { Id: candidatoId } })
+    .then((result) => {
+      return res.redirect("/candidato");
+    })
+    .catch((err) => {
+      res.render("Error/ErrorInterno", {
+        pageTitle: "Error Interno",
+        mensaje: err,
+      });
+    });
+};
+
+exports.PostActivarCandidato = async (req, res, next) => {
+  const candidatoId = req.body.candidatoId;
+  const candidatoFound = await Candidato.findByPk(candidatoId);
+
+  if (!candidatoFound) {
+    req.flash("errors", "Ese candidato no fue encontrado en el sistema");
+    return res.redirect("/candidato");
+  }
+  //*ACTIVANDO CANDIDATO
+  Candidato.update({ status: true }, { where: { Id: candidatoId } })
     .then((result) => {
       return res.redirect("/candidato");
     })
