@@ -11,17 +11,49 @@ const Votos = require("../models/Votos");
 // };
 
 exports.getVotacionPage = async (req, res, next) => {
+
   if (!req.session.eleccion) {
     req.flash("errors", "No hay ninguna eleccion activa.");
   }
+  const Ciudadano = req.session.ciudadano;
+
   let puestos;
   try {
     puestos = await Puesto.findAll();
-    puestos = puestos.map((result) => result.dataValues);
-  } catch (error) {
-    console.error('Error:', error);
-  }
+    puestos = puestos.map((result) => {
+      return { ...result.dataValues, utilizado: false };
+    });
 
+    let votos = await Votos.findAll({
+      where: {
+        CiudadanoId: Ciudadano.Id, // Segunda condición
+      },
+    });
+
+    // if (votos.length >= puestos.length) {
+    //   req.session = null;
+    //   req.flash(
+    //     "success",
+    //     `Ha completado su proceso de votacion, gracias por participar.`
+    //   );
+    //   console.log('------------------')
+    //   return res.redirect("/");
+    // }
+
+    votos = votos.map((result) => result.dataValues);
+    if (votos.length > 0) {
+      votos.forEach((v) => {
+        puestos.forEach((p) => {
+          if (p.Id === v.PuestoId) {
+            p.utilizado = true;
+          }
+        });
+      });
+    }
+    console.log(puestos);
+  } catch (error) {
+    console.error("Error:", error);
+  }
 
   res.status(200).render("ciudadano/votacion", {
     pageTitle: "Votacion",
@@ -32,40 +64,58 @@ exports.getVotacionPage = async (req, res, next) => {
   });
 };
 
-
-
 exports.getVotacionPuestosPage = async (req, res, next) => {
-
   if (!req.session.eleccion) {
     req.flash("errors", "No hay ninguna eleccion activa.");
   }
 
+  const EleccioneId = req.session.eleccion.Id;
   const puestoId = req.params.puestoId;
   const Ciudadano = req.session.ciudadano;
 
-//! 
+  try {
+    let votos = await Votos.findAll({
+      where: {
+        PuestoId: puestoId, // Primera condición
+        CiudadanoId: Ciudadano.Id, // Segunda condición
+      },
+    });
+    votos = votos.map((result) => result.dataValues);
+
+    if (votos.length > 0) {
+      req.flash("errors", "Usted ya ha votado por este puesto.");
+      res.redirect("/votacion");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+
   let candidatos;
   let puesto;
   try {
-    puesto = await Puesto.findOne({where: {Id: puestoId}});
-
-    candidatos = await Candidato.findAll({include: { all: true } , where: {PuestoId: puestoId}});
+    puesto = await Puesto.findOne({ where: { Id: puestoId } });
+    puesto = puesto.dataValues;
+    candidatos = await Candidato.findAll({
+      include: { all: true },
+      where: { PuestoId: puestoId },
+    });
 
     candidatos = candidatos.map((result) => {
-      let temp = {...result.dataValues};
+      let temp = { ...result.dataValues };
       temp.Puesto = temp.Puesto.dataValues;
       temp.Partido = temp.Partido.dataValues;
       return temp;
     });
-    console.log(candidatos)
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
   }
   res.status(200).render("ciudadano/votacion-puesto", {
     pageTitle: `${puesto.name} Votacion`,
     votacionActive: true,
     candidato: candidatos,
     ciudadano: Ciudadano,
+    puesto: puesto,
+    EleccioneId: EleccioneId,
     // puesto: puesto.name,
   });
 };
@@ -113,8 +163,10 @@ exports.GetCandidatoList = async (req, res, next) => {
 exports.PostAddVotacion = (req, res, next) => {
   const CandidatoId = req.body.CandidatoId;
   const PuestoId = req.body.PuestoId;
+  const PuestoName = req.body.PuestoName;
   const CiudadanoId = req.session.ciudadano.Id;
   const EleccionesId = req.session.eleccion.Id;
+
   Votos.create({
     CandidatoId: CandidatoId,
     PuestoId: PuestoId,
@@ -122,9 +174,8 @@ exports.PostAddVotacion = (req, res, next) => {
     EleccioneId: EleccionesId,
   })
     .then((result) => {
-      return res.json({
-        ok: true,
-      });
+      req.flash("success", `Votacion realizada para el puesto ${PuestoName}`);
+      res.redirect("/votacion");
     })
     .catch((err) => {
       console.log(err);

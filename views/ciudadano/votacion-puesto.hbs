@@ -1,4 +1,4 @@
- <h2 class="text-center text-info ">Listado de candidatos disponibles para el puesto de {{puesto}}</h2>
+ <h2 class="text-center text-info ">Listado de candidatos disponibles para el puesto de {{puesto.name}}</h2>
 
  <div class="album py-5">
   <div class="container">
@@ -19,9 +19,10 @@
 
               <form class="" action="/votar" method="post">
                 <input type="hidden" name="CandidatoId" value="{{candidato.Id}}" />
-                <input type="hidden" name="PuestoId" value="{{candidato.Id}}" />
-                <input type="hidden" name="CiudadanoId" value="{{candidato.Id}}" />
-                <input type="hidden" name="EleccionesId" value="{{candidato.Id}}" />
+                <input type="hidden" name="PuestoId" value="{{../puesto.Id}}" />
+                <input type="hidden" name="PuestoName" value="{{../puesto.name}}" />
+                <input type="hidden" name="CiudadanoId" value="{{ciudadano.Id}}" />
+                <input type="hidden" name="EleccionesId" value="{{EleccioneId}}" />
                 <button type="submit" class="btn btn-info text-white  w-100"><span class="btnvoto">Votar</span></button>
                 
 

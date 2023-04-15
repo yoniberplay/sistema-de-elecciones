@@ -1,5 +1,5 @@
 const Puesto = require("../models/Puesto");
-const Voto = require("../models/Votos");
+const Votos = require("../models/Votos");
 
 exports.ciudadanoAuth = (req, res, next) => {
   if (!req.session.ciudadano) {
@@ -10,44 +10,42 @@ exports.ciudadanoAuth = (req, res, next) => {
 };
 
 exports.votingCiudadanoTracking = async (req, res, next) => {
-  const Ciudadano = req.session.ciudadano
-  //! SE DEBE VALIDAR QUE EL VOTO Y EL PUESTO SEA DE LA SELECCION EN CURSO
-  const Votos = await Voto.findAll({raw: true, where: {CiudadanoId: Ciudadano.Id}});
-  const Puestos = await Puesto.findAll({raw: true});
-  let hasPuestos = true;
-  if( Puestos.length <= 0 ){
-    hasPuestos = false;
+
+  const Ciudadano = req.session.ciudadano;
+
+  let puestos;
+  try {
+    puestos = await Puesto.findAll();
+    puestos = puestos.map((result) => {
+      return { ...result.dataValues, utilizado: false };
+    });
+    let votos = await Votos.findAll({
+      where: {
+        CiudadanoId: Ciudadano.Id, // Segunda condición
+      },
+    });
+
+    if (votos.length >= puestos.length) {
+      req.session.destroy((err) => {
+        if(err) {
+          console.log(err);
+        } else {
+          const successMessages = ["Usted ya ha ejercido su derecho al voto."];
+          res.render("auth/loginCiudadano", {
+            pageTitle: "Sistema de Elecciones",
+            hasSuccessMessages: true,
+            isCiudadano: false,
+            successMessages: successMessages
+          });
+        }
+      });
+     
+    }else{
+      next();
+    }
+  } catch (error) {
+    console.error("Error:", error);
   }
-  let hasVotos = true;
-  if( Votos.length <= 0 ){
-    hasVotos = false;
-  } 
-    
-  //? mi logica es recorrer en un bucle anidado los votos que tiene el ciudadano
-  //? y mapear los puestos a los que no ha votado asi puedo elegir que puesto votara 
-  //? a continuacion
 
-  const puestosYaVotados = [];
-
-  Votos.forEach(e => {
-   
-    Puestos.forEach( p => {
-   
-      if (e.PuestoId === p.Id) {
-        puestosYaVotados.push(p)
-      }
-    })
-  })
-
-  const puestosNoVotados = Puestos.filter(puesto => !puestosYaVotados.find(p => p.Id === puesto.Id));
- 
   
-
-  // console.log(puestosNoVotados)
-  //?Almacenar el listado de los puestos
-  req.session.puestosNoVotados = puestosNoVotados
-  req.session.hasPuestos = hasPuestos
-  req.session.hasVotos = hasVotos
-  
-  next();
-}
+};

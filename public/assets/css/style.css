@@ -47,6 +47,40 @@
   width: 200px;
 }
 /**/
+.notc {
+  display: inline-block;
+  margin-right: 20px;
+  text-align: center;
+  vertical-align: top;
+  transition: transform 0.2s ease-in-out;
+  
+}
+
+.notc img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 7px solid #2bbb07;
+}
+
+.notc a {
+  text-decoration: none;
+}
+.notc a samp{
+  display: block;
+  font-size: 20px;
+  font-weight: lighter;
+  color: #fff;
+  margin-top: 10px;
+  padding-top: 12px;
+}
+
+.notc img:hover {
+  cursor: not-allowed;
+  /* box-shadow: 0 0 50px 5px #2bbb07; */
+}
+
+
 .c {
   display: inline-block;
   margin-right: 20px;

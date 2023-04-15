@@ -154,8 +154,8 @@ Partido.hasMany(Candidato);
 Candidato.belongsTo(Partido, { constraint: true, onDelete: "CASCADE" });
 // Elecciones.belongsToMany(Puesto, { through: EleccionPuesto });
 // Puesto.belongsToMany(Elecciones, { through: EleccionPuesto });
-Elecciones.belongsToMany(Ciudadano, { through: Votos, unique: false  });
-Ciudadano.belongsToMany(Elecciones, { through: Votos, unique: false  });
+Elecciones.belongsToMany(Ciudadano, { through: Votos});
+Ciudadano.belongsToMany(Elecciones, { through: Votos});
 
 Votos.belongsTo(Candidato);
 Votos.belongsTo(Ciudadano);
