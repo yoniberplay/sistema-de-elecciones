@@ -16,6 +16,11 @@ exports.GetAdminHome = (req, res, next) => {
 };
 
 exports.PostLoginCiudadano = async (req, res, next) => {
+
+  if (req.session.user) {
+    req.session.user = null;
+  }
+
   const cedula = req.body.cedula;
   
   try{
@@ -65,6 +70,12 @@ exports.GetLogin = (req, res, next) => {
 };
 
 exports.PostLogin = (req, res, next) => {
+
+  if (req.session.ciudadano) {
+    req.session.ciudadano = null;
+  }
+
+  
   const email = req.body.email;
   const password = req.body.password;
 
