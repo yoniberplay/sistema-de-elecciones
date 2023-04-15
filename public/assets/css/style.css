@@ -118,7 +118,34 @@
   margin-top: 10px;
   padding-top: 12px;
 }
+/*Home administrador*/
 
+.home-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.grid-element{
+  text-decoration: none;
+  text-align: center;
+}
+
+.grid-element:hover{
+  transform: scale(1.05);
+}
+
+.grid-element img{
+  width: 300px;
+  height: 400px;
+}
+.grid-element span{
+  display: block;
+  font-size: 30px;
+  font-weight: lighter;
+  color: #fff;
+}
 
 
 
