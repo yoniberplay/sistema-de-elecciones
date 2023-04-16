@@ -144,8 +144,13 @@ app.use(errorController.Get404);
 //? Relaciones de las tablas
 Puesto.hasMany(Candidato);
 Candidato.belongsTo(Puesto, { constraint: true, onDelete: "CASCADE" });
+
+Elecciones.hasMany(Puesto);
+Puesto.belongsTo(Elecciones, { constraint: true, onDelete: "CASCADE" });
+
 Partido.hasMany(Candidato);
 Candidato.belongsTo(Partido, { constraint: true, onDelete: "CASCADE" });
+
 // Elecciones.belongsToMany(Puesto, { through: EleccionPuesto });
 // Puesto.belongsToMany(Elecciones, { through: EleccionPuesto });
 Elecciones.belongsToMany(Ciudadano, { through: Votos });

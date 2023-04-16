@@ -37,14 +37,20 @@ exports.GetPuestoList = (req, res, next) => {
   //   });
 };
 
-exports.GetCreatePuesto = (req, res, next) => {
-  // const EleccionActiva = Eleccion.findOne({raw: true, where: {status: true}})
-  // console.log(EleccionActiva)
+exports.GetCreatePuesto = async (req, res, next) => {
+  const EleccionActiva = await Eleccion.findOne({
+    raw: true,
+    where: { status: true },
+  });
+
   //? No se puede crear si no hay una eleccion activa
-  // if (!EleccionActiva) {
-  //   req.flash("errors", "No se puede crear puestos ya que no hay una eleccion activa en el sistema");
-  //   return res.redirect("/user")
-  // }
+  if (!EleccionActiva) {
+    req.flash(
+      "errors",
+      "No se puede crear puestos ya que no hay una eleccion activa en el sistema"
+    );
+    return res.redirect("/puesto");
+  }
 
   res.render("puesto/save-puesto", {
     pageTitle: "Create Puesto",
@@ -58,9 +64,17 @@ exports.PostCreatePuesto = async (req, res, next) => {
   const description = req.body.description;
   const status = true;
 
-  // const activeEleccion = await Eleccion.findOne({ raw: true, where: {status: true}})
+  const activeEleccion = await Eleccion.findOne({
+    raw: true,
+    where: { status: true },
+  });
 
-  Puesto.create({ name: name, description: description, status: status })
+  Puesto.create({
+    name: name,
+    description: description,
+    status: status,
+    EleccioneId: activeEleccion.Id,
+  })
     .then((result) => {
       res.redirect("/puesto");
     })

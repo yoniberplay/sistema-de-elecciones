@@ -19,14 +19,15 @@ exports.getVotacionPage = async (req, res, next) => {
 
   let puestos;
   try {
-    puestos = await Puesto.findAll({ where: { eleccionId: eleccion.Id } });
+    puestos = await Puesto.findAll({ where: { EleccioneId: eleccion.Id } });
     puestos = puestos.map((result) => {
       return { ...result.dataValues, utilizado: false };
     });
 
     let votos = await Votos.findAll({
       where: {
-        CiudadanoId: Ciudadano.Id, // Segunda condición
+        CiudadanoId: Ciudadano.Id,
+        EleccioneId: eleccion.Id, // Segunda condición
       },
     });
 

@@ -2,9 +2,9 @@
   <div class="row py-lg-5">
     <div class="col-lg-6 col-md-8 mx-auto">
       <h1 class="fw-light text-white">Mantenimiento de candidato</h1>
-      {{#if eleccionActiva}}
+      {{#if hasEleccionActive}}
       <div class="alert alert-info" role="alert">
-        No se permite crear candidatos, si ya existe una eleccion activa.
+        No se permite crear candidatos, si existe una eleccion activa.
       </div>
       {{else}}
       <a href="/create-candidato" class="btn btn-primary my-2">Crear nuevo candidato</a>
@@ -16,7 +16,7 @@
 <div class="album py-5">
   <div class="container">
 
-    <div class="row">
+    <div class="d-flex justify-content-evenly">
 
       {{#if hasCandidato}}
 
@@ -31,10 +31,13 @@
           <h6 class="card-subtitle mb-2 text-muted"> <span class="text-white">Partido:
             </span>{{candidato.Partido.dataValues.name}}
           </h6>
+          <h6 class="card-subtitle mb-2 text-muted"> <span class="text-white">Eleccion:
+            </span>{{candidato.Puesto.dataValues.Eleccione.dataValues.name}}
+          </h6>
 
 
 
-          {{#if ../eleccionActiva}}
+          {{#if ../hasEleccionActive}}
 
           {{else}}
 
