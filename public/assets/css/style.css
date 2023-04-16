@@ -65,6 +65,7 @@
 
 .notc a {
   text-decoration: none;
+  cursor: not-allowed;
 }
 .notc a samp{
   display: block;

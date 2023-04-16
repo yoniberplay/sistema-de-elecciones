@@ -41,7 +41,12 @@
             <td>{{ciudadano.lastName}}</td>
             <td>{{ciudadano.IdDoc}}</td>
             <td>{{ciudadano.email}}</td>
-              <td>{{#if puesto.status}}Activo{{else}}Inactivo{{/if}}</td>
+            {{#if ciudadano.status}} 
+             <td class="text-success">Activo</td>
+            {{else}}
+             <td class="text-danger">Inactivo</td>            
+            {{/if}}
+             
             {{#if ../hasEleccionActive}}
 
             {{else}}

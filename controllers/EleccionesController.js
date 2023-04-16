@@ -184,17 +184,22 @@ exports.PostDeleteElecciones = (req, res, next) => {
 
 exports.GetResultadosElecciones = async (req, res, next) => {
   const eleccionId = req.params.eleccionId;
+  let eleccionInfo;
 
   if (!eleccionId) {
-    return res.redirect("/user");
+    return res.redirect("/eleccion");
   }
-
   const eleccion = await Elecciones.findByPk(eleccionId, { raw: true });
 
-  const eleccionInfo = await eleccionPuestosInfo(eleccionId);
-  // res.json({
-  //   eleccionInfo
-  // })
+  if(eleccion !== null){
+     eleccionInfo = await eleccionPuestosInfo(eleccionId);
+  }else{
+    return res.redirect("/eleccion");
+  }
+
+  // console.log(1111111111111)
+  // console.log(eleccion)
+
   res.status(200).render("eleccion_resultado/resultado", {
     puestos: eleccionInfo,
     hasPuestos: eleccionPuestosInfo.length > 0,
@@ -211,7 +216,8 @@ async function eleccionPuestosInfo(eleccionId) {
 
   const Candidatos = await Candidato.findAll({ raw: true });
 
-  const Puestos = await Puesto.findAll({ raw: true, where: { eleccionId } });
+  // const Puestos = await Puesto.findAll({ raw: true, where: { eleccionId } });
+  const Puestos = await Puesto.findAll({ raw: true});
 
   const Partidos = await Partido.findAll({ raw: true });
 
