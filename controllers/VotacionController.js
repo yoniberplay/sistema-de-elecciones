@@ -11,15 +11,15 @@ const Votos = require("../models/Votos");
 // };
 
 exports.getVotacionPage = async (req, res, next) => {
-
   if (!req.session.eleccion) {
     req.flash("errors", "No hay ninguna eleccion activa.");
   }
   const Ciudadano = req.session.ciudadano;
+  const eleccion = req.session.eleccion;
 
   let puestos;
   try {
-    puestos = await Puesto.findAll();
+    puestos = await Puesto.findAll({ where: { eleccionId: eleccion.Id } });
     puestos = puestos.map((result) => {
       return { ...result.dataValues, utilizado: false };
     });
@@ -60,6 +60,7 @@ exports.getVotacionPage = async (req, res, next) => {
     ciudadano: req.ciudadano.dataValues,
     eleccion: req.session.eleccion,
     puestos: puestos,
+    hasPuestos: puestos.length > 0,
     votacionActive: true,
   });
 };
