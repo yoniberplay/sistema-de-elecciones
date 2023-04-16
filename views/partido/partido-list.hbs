@@ -2,10 +2,13 @@
   <div class="row py-lg-5">
     <div class="col-lg-6 col-md-8 mx-auto">
       <h1 class="fw-light text-white">Mantenimiento de partido</h1>
+      {{#if hasEleccionActive}}
+      <div class="alert alert-info" role="alert">
+        No se permite crear partidos, si ya existe una eleccion activa.
+      </div>
+      {{else}}
       <a href="/create-partido" class="btn btn-primary my-2">Crear nuevo partido</a>
-        {{#if isAuthenticated}}
-        
-        {{/if}}
+      {{/if}}
     </div>
   </div>
 </section>
@@ -13,7 +16,7 @@
 <div class="album py-5">
   <div class="container">
 
-    <div class="row">
+    <div class="d-flex justify-content-evenly">
 
       {{#if hasPartido}}
 

@@ -7,17 +7,23 @@ const Eleccion = require("../models/Elecciones");
 exports.GetCandidatoList = (req, res, next) => {
   Promise.all([
     Candidato.findAll({
-      include: [{ model: Partido }, { model: Puesto }],
+      include: [
+        { model: Partido },
+        { model: Puesto, include: { model: Eleccion } },
+      ],
     }),
     Eleccion.findOne({ raw: true, where: { status: true } }),
   ])
     .then(([candidatos, eleccion]) => {
+      const candidatoMap = candidatos.map((p) => p.dataValues);
+      const candidatoFilter = candidatoMap.filter((p) => p.name !== "NINGUNO");
+
       res.render("candidato/candidato-list", {
         pageTitle: "candidato",
         candidatoActive: true,
-        candidatos: candidatos.map((p) => p.dataValues),
+        candidatos: candidatoFilter,
         hasCandidato: candidatos.length > 0,
-        eleccionActiva: eleccion ? true : false,
+        hasEleccionActive: eleccion ? true : false,
       });
     })
     .catch((err) => {
@@ -53,9 +59,17 @@ async function insertDefaultCandidate() {
 }
 exports.GetCreateCandidato = async (req, res, next) => {
   try {
+    const eleccionActiva = await Eleccion.findOne({
+      raw: true,
+      where: { status: true },
+    });
+
     const [partidos, puestos] = await Promise.all([
       Partido.findAll({ raw: true, where: { status: true } }),
-      Puesto.findAll({ raw: true, where: { status: true } }),
+      Puesto.findAll({
+        raw: true,
+        where: { status: true },
+      }),
     ]);
 
     await insertDefaultCandidate();

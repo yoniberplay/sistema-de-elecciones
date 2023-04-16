@@ -14,28 +14,30 @@ async function hay2CandidatosPorPuesto() {
       where: { status: true },
     },
   });
+  if (candidatos?.length > 0) {
+    console.log(candidatos);
 
-  // console.log(candidatos);
+    const candidatosAgrupados = candidatos.reduce((acc, curr) => {
+      const puestoName = curr["Puesto.name"];
+      if (!acc[puestoName]) {
+        acc[puestoName] = [];
+      }
+      acc[puestoName].push(curr);
+      return acc;
+    }, {});
 
-  const candidatosAgrupados = candidatos.reduce((acc, curr) => {
-    const puestoName = curr["Puesto.name"];
-    if (!acc[puestoName]) {
-      acc[puestoName] = [];
+    let hay2CandidatosPorPuesto = true;
+
+    for (const puesto in candidatosAgrupados) {
+      if (candidatosAgrupados[puesto].length < 3) {
+        hay2CandidatosPorPuesto = false;
+        break;
+      }
     }
-    acc[puestoName].push(curr);
-    return acc;
-  }, {});
-
-  let hay2CandidatosPorPuesto = true;
-
-  for (const puesto in candidatosAgrupados) {
-    if (candidatosAgrupados[puesto].length < 3) {
-      hay2CandidatosPorPuesto = false;
-      break;
-    }
+    return hay2CandidatosPorPuesto;
+  } else {
+    return false;
   }
-
-  return hay2CandidatosPorPuesto;
 }
 
 exports.GetEleccionesList = async (req, res, next) => {
@@ -182,6 +184,28 @@ exports.PostDeleteElecciones = (req, res, next) => {
     });
 };
 
+exports.PostActivarEleccion = async (req, res, next) => {
+  const eleccionId = req.body.eleccionId;
+
+  const eleccionFound = await Elecciones.findByPk(eleccionId);
+
+  if (!eleccionFound) {
+    req.flash("errors", "Esa eleccion no fue encontrado en el sistema");
+    return res.redirect("/eleccion");
+  }
+  //*ACTIVANDO ELECCION
+  Elecciones.update({ status: true }, { where: { Id: eleccionId } })
+    .then((result) => {
+      return res.redirect("/eleccion");
+    })
+    .catch((err) => {
+      res.render("Error/ErrorInterno", {
+        pageTitle: "Error Interno",
+        mensaje: err,
+      });
+    });
+};
+
 exports.GetResultadosElecciones = async (req, res, next) => {
   const eleccionId = req.params.eleccionId;
   let eleccionInfo;
@@ -191,14 +215,11 @@ exports.GetResultadosElecciones = async (req, res, next) => {
   }
   const eleccion = await Elecciones.findByPk(eleccionId, { raw: true });
 
-  if(eleccion !== null){
-     eleccionInfo = await eleccionPuestosInfo(eleccionId);
-  }else{
+  if (eleccion !== null) {
+    eleccionInfo = await eleccionPuestosInfo(eleccionId);
+  } else {
     return res.redirect("/eleccion");
   }
-
-  // console.log(1111111111111)
-  // console.log(eleccion)
 
   res.status(200).render("eleccion_resultado/resultado", {
     puestos: eleccionInfo,
@@ -217,7 +238,10 @@ async function eleccionPuestosInfo(eleccionId) {
   const Candidatos = await Candidato.findAll({ raw: true });
 
   // const Puestos = await Puesto.findAll({ raw: true, where: { eleccionId } });
-  const Puestos = await Puesto.findAll({ raw: true});
+  const Puestos = await Puesto.findAll({
+    raw: true,
+    where: { EleccioneId: eleccionId },
+  });
 
   const Partidos = await Partido.findAll({ raw: true });
 

@@ -2,9 +2,14 @@
   <div class="row py-lg-5">
     <div class="col-lg-6 col-md-8 mx-auto">
       <h1 class="fw-light text-white">Mantenimiento de puesto</h1>
-      <a href="/create-puesto" class="btn btn-primary my-2">Crear nuevo puesto</a>
-      {{#if isAuthenticated}}
 
+
+      {{#if hasEleccionActive}}
+      <div class="alert alert-info" role="alert">
+        No se permite crear puestos, si ya existe una eleccion activa.
+      </div>
+      {{else}}
+      <a href="/create-puesto" class="btn btn-primary my-2">Crear nuevo puesto</a>
       {{/if}}
     </div>
   </div>
@@ -24,12 +29,12 @@
             <th scope="col">Descripcion</th>
             <th scope="col">Estado</th>
             {{#if hasEleccionActive}}
-            
+
             {{else}}
             <th scope="col">Editar</th>
             <th scope="col">Eliminar</th>
             {{/if}}
-            
+
           </tr>
         </thead>
         <tbody>
@@ -43,26 +48,26 @@
             {{#if ../hasEleccionActive}}
 
             {{else}}
-              <td>
-                <a href="/edit-puesto/{{puesto.Id}}?edit=true" class="btn btn-warning">Editar</a>
-              </td>
-              <td>
-                {{#if puesto.status}}
-                <form class="form-inline form-delete" action="/delete-puesto" method="post">
-                  <input type="hidden" name="puestoId" value="{{puesto.Id}}" />
-                  <button type="submit" class="btn btn-danger delete-puesto">Inactivar</button>
-                </form>
-                {{else}}
-                <form class="form-inline" action="/activar-puesto" method="post">
-                  <input type="hidden" name="puestoId" value="{{puesto.Id}}" />
-                  <button type="submit" class="btn btn-success ">Activar</button>
-                </form>
-              
-                {{/if}}
-              
-              </td>
+            <td>
+              <a href="/edit-puesto/{{puesto.Id}}?edit=true" class="btn btn-warning">Editar</a>
+            </td>
+            <td>
+              {{#if puesto.status}}
+              <form class="form-inline form-delete" action="/delete-puesto" method="post">
+                <input type="hidden" name="puestoId" value="{{puesto.Id}}" />
+                <button type="submit" class="btn btn-danger delete-puesto">Inactivar</button>
+              </form>
+              {{else}}
+              <form class="form-inline" action="/activar-puesto" method="post">
+                <input type="hidden" name="puestoId" value="{{puesto.Id}}" />
+                <button type="submit" class="btn btn-success ">Activar</button>
+              </form>
+
+              {{/if}}
+
+            </td>
             {{/if}}
-           
+
           </tr>
           {{/each}}
         </tbody>

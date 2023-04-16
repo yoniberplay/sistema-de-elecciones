@@ -2,9 +2,13 @@
   <div class="row py-lg-5">
     <div class="col-lg-6 col-md-8 mx-auto">
       <h1 class="fw-light text-white">Mantenimiento de ciudadano</h1>
-      <a href="/create-ciudadano" class="btn btn-primary my-2">Crear nuevo ciudadano</a>
-      {{#if isAuthenticated}}
 
+      {{#if hasEleccionActive}}
+      <div class="alert alert-info" role="alert">
+        No se permite crear ciudadanos, si ya existe una eleccion activa.
+      </div>
+      {{else}}
+      <a href="/create-ciudadano" class="btn btn-primary my-2">Crear nuevo ciudadano</a>
       {{/if}}
     </div>
   </div>
