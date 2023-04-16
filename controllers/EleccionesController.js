@@ -79,7 +79,7 @@ exports.GetCreateEleccion = (req, res, next) => {
 exports.PostCreateEleccion = async (req, res, next) => {
   const name = req.body.name;
   const fechaRealizacion = req.body.fechaRealizacion || Date.now();
-  const status = true;
+  const status = false;
 
   Elecciones.create({
     name: name,

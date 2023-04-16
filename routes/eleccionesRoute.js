@@ -31,5 +31,10 @@ router.get(
   admintauth,
   EleccionesController.GetResultadosElecciones
 );
+router.post(
+  "/activar-eleccion",
+  admintauth,
+  EleccionesController.PostActivarEleccion
+);
 
 module.exports = router;

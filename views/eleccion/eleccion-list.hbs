@@ -6,14 +6,8 @@
         No se permite crear elecciones, si ya existe una eleccion activa
       </div>
       {{else}}
-      {{#if thereisCandidatos}}
       <a href="/create-eleccion" class="btn btn-primary my-2 ">Crear nueva elección</a>
-      {{else}}
-      <div class="alert alert-info" role="alert">
-        No existen al menos dos candidatos
-        creados y activos por cada puesto creado para iniciar la eleccion.
-      </div>
-      {{/if}}
+      
 
       {{/if}}
 
@@ -53,12 +47,24 @@
             <button type="submit" class="btn btn-danger delete-eleccion float-end">Finalizar</button>
           </form>
           {{else}}
-          <a href="/eleccion-results/{{eleccion.Id}}" class="btn btn-primary float-end">Resultados</a>
+          
+            <a href="/eleccion-results/{{eleccion.Id}}" class="btn btn-primary d-block">Resultados</a>
+
+            {{#if ../thereisCandidatos}}
+            
+              <form class="form-inline" action="/activar-candidato" method="post">
+                <input type="hidden" name="candidatoId" value="{{candidato.Id}}" />
+                <button type="submit" class="btn btn-success ">Activar</button>
+              </form>
+
+            {{else}}
+              <div class="alert alert-info" role="alert">
+                No existen al menos dos candidatos
+                creados y activos por cada puesto creado para iniciar la eleccion.
+              </div>
+            {{/if}}
+
           {{/if}}
-
-
-
-
 
           {{#if ../isAuthenticated}}
 
