@@ -17,7 +17,7 @@ exports.GetCandidatoList = (req, res, next) => {
         candidatoActive: true,
         candidatos: candidatos.map((p) => p.dataValues),
         hasCandidato: candidatos.length > 0,
-        eleccionActive: eleccion ? true : false,
+        eleccionActiva: eleccion ? true : false,
       });
     })
     .catch((err) => {
