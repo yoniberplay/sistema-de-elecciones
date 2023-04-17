@@ -12,6 +12,7 @@ exports.ciudadanoAuth = (req, res, next) => {
 
 exports.votingCiudadanoTracking = async (req, res, next) => {
   const Ciudadano = req.session.ciudadano;
+  const eleccionActiva = req.session.eleccion;
 
   let puestos;
   try {
@@ -21,7 +22,8 @@ exports.votingCiudadanoTracking = async (req, res, next) => {
     });
     let votos = await Votos.findAll({
       where: {
-        CiudadanoId: Ciudadano.Id, // Segunda condición
+        CiudadanoId: Ciudadano.Id,
+        EleccioneId: eleccionActiva.Id, // Segunda condición
       },
     });
 

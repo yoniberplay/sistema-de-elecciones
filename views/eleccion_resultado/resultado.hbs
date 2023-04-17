@@ -10,30 +10,39 @@
 <div class="album py-5">
   <div class="container">
     <h2>Puestos disputados</h2>
-    <div class="row">
+    <div class="d-flex justify-content-evenly">
 
-      {{#if hasPuestos}}
-
+      {{#if hasCandidatos}}
+      
       {{#each puestos as |puesto|}}
 
-      <div class="card col-md-5">
+      <div class="card col-5">
         <div class="card-body">
           <h5 class="card-title">{{puesto.name}}</h5>
-          {{#each puesto.candidatos as |pC|}}
+
+          {{#each ../candidatos as |pC|}}
+
+          {{#if (equalValue puesto.Id pC.PuestoId)}}
           <div>
-            <img class="img-fluid" style="width: 50px;" src="{{pC.img}}"></img>
+            {{#if (equalValue "NINGUNO" pC.name)}}
+            <img class="img-fluid" style="width: 50px;" src="/assets/img/ninguno.jpeg"></img>
             
-            <div class="d-flex ">
-              <p class="">Candidato: <span class="btn btn-primary">{{pC.name}}</span></p>
-              <p class="ms-3">Votos: <span class="btn btn-primary"> {{pC.votos}} -- {{pC.porcentaje}}%</span></p>
+            {{else}}
+            <img class="img-fluid" style="width: 50px;" src="{{pC.imgPerfil}}"></img>
+            {{/if}}
+            
+            <div class="d-flex flex-column">
+              <p class="">Candidato: <span class="btn btn-primary float-end">{{pC.name}}</span></p>
+              <p class="">Votos: <span class="btn btn-primary float-end"> {{pC.votos}} -- {{pC.votosPorcentaje}}%</span></p>
               
 
               {{#each pC.partido as |pa| }}
-                <p class="ms-3">Partido: <span class="btn btn-primary"> {{pa.name}}</span></p>
+                <p class="">Partido: <span class="btn btn-primary float-end"> {{pa.name}}</span></p>
               {{/each}}
             </div>
 
           </div>
+          {{/if}}
           {{/each}}
 
         </div>

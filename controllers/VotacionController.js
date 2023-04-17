@@ -14,6 +14,7 @@ exports.getVotacionPage = async (req, res, next) => {
   if (!req.session.eleccion) {
     req.flash("errors", "No hay ninguna eleccion activa.");
   }
+  const eleccionActiva = req.session.eleccion;
   const Ciudadano = req.session.ciudadano;
 
   let puestos;
@@ -25,7 +26,8 @@ exports.getVotacionPage = async (req, res, next) => {
 
     let votos = await Votos.findAll({
       where: {
-        CiudadanoId: Ciudadano.Id, // Segunda condición
+        CiudadanoId: Ciudadano.Id,
+        EleccioneId: eleccionActiva.Id, // Segunda condición
       },
     });
 
@@ -49,7 +51,6 @@ exports.getVotacionPage = async (req, res, next) => {
         });
       });
     }
-    console.log(puestos);
   } catch (error) {
     console.error("Error:", error);
   }
@@ -77,6 +78,7 @@ exports.getVotacionPuestosPage = async (req, res, next) => {
       where: {
         PuestoId: puestoId, // Primera condición
         CiudadanoId: Ciudadano.Id, // Segunda condición
+        EleccioneId: eleccionActiva.Id,
       },
     });
     votos = votos.map((result) => result.dataValues);
@@ -181,6 +183,7 @@ exports.PostAddVotacion = (req, res, next) => {
 
       return res.json({
         ok: false,
+        msg: "elimina la contraint Votos_CiudadanoId_EleccioneId_unique",
       });
     });
 };
