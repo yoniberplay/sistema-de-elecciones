@@ -16,26 +16,29 @@ async function hay2CandidatosPorPuesto() {
   });
 
   // console.log(candidatos);
+  if (candidatos.length > 1) {
+    const candidatosAgrupados = candidatos.reduce((acc, curr) => {
+      const puestoName = curr["Puesto.name"];
+      if (!acc[puestoName]) {
+        acc[puestoName] = [];
+      }
+      acc[puestoName].push(curr);
+      return acc;
+    }, {});
 
-  const candidatosAgrupados = candidatos.reduce((acc, curr) => {
-    const puestoName = curr["Puesto.name"];
-    if (!acc[puestoName]) {
-      acc[puestoName] = [];
+    let hay2CandidatosPorPuesto = true;
+
+    for (const puesto in candidatosAgrupados) {
+      if (candidatosAgrupados[puesto].length < 3) {
+        hay2CandidatosPorPuesto = false;
+        break;
+      }
     }
-    acc[puestoName].push(curr);
-    return acc;
-  }, {});
 
-  let hay2CandidatosPorPuesto = true;
-
-  for (const puesto in candidatosAgrupados) {
-    if (candidatosAgrupados[puesto].length < 3) {
-      hay2CandidatosPorPuesto = false;
-      break;
-    }
+    return hay2CandidatosPorPuesto;
+  } else {
+    return false;
   }
-
-  return hay2CandidatosPorPuesto;
 }
 
 exports.GetEleccionesList = async (req, res, next) => {
@@ -55,7 +58,7 @@ exports.GetEleccionesList = async (req, res, next) => {
         canCreateEleccion = eleccion.find((e) => e.status === true);
       }
 
-      console.log(canCreateEleccion)
+      // console.log(canCreateEleccion);
       res.render("eleccion/eleccion-list", {
         pageTitle: "eleccion",
         eleccionActive: true,
