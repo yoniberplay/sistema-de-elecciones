@@ -31,6 +31,7 @@ const errorController = require("./controllers/ErrorController");
 const app = express();
 
 const compareHelpers = require("./util/helpers/hbs/compare");
+const sumaHelpers = require("./util/helpers/hbs/sumar");
 
 app.engine(
   "hbs",
@@ -40,6 +41,7 @@ app.engine(
     extname: "hbs",
     helpers: {
       equalValue: compareHelpers.EqualValue,
+      sumarValue: sumaHelpers.sumar,
     },
   })
 );
