@@ -58,6 +58,12 @@ exports.GetCreateCandidato = async (req, res, next) => {
       Puesto.findAll({ raw: true, where: { status: true } }),
     ]);
 
+    if(partidos.length <= 0){
+      req.flash("errors", "Para la creacion de un candidado es necesario crear la menos un partido politico.");
+      return res.redirect("/candidato");
+    }
+    
+
     await insertDefaultCandidate();
 
     return res.render("candidato/save-candidato", {
