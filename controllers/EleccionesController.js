@@ -40,15 +40,22 @@ async function hay2CandidatosPorPuesto() {
 
 exports.GetEleccionesList = async (req, res, next) => {
   let thereisCandidatos = await hay2CandidatosPorPuesto();
-  // console.log(thereisCandidatos);
+  let puestoslista = await Puesto.findAll({
+    raw: true,
+  });
+  puestoslista.map((result) => result.dataValues);
 
+  let canCreateEleccion = puestoslista.length < 2;
   Elecciones.findAll()
     .then((result) => {
       let eleccion = result
         .map((result) => result.dataValues)
         .sort((a, b) => b.status - a.status);
+      if (!canCreateEleccion) {
+        canCreateEleccion = eleccion.find((e) => e.status === true);
+      }
 
-      let canCreateEleccion = eleccion.find((e) => e.status === true);
+      console.log(canCreateEleccion)
       res.render("eleccion/eleccion-list", {
         pageTitle: "eleccion",
         eleccionActive: true,
@@ -191,9 +198,9 @@ exports.GetResultadosElecciones = async (req, res, next) => {
   }
   const eleccion = await Elecciones.findByPk(eleccionId, { raw: true });
 
-  if(eleccion !== null){
-     eleccionInfo = await eleccionPuestosInfo(eleccionId);
-  }else{
+  if (eleccion !== null) {
+    eleccionInfo = await eleccionPuestosInfo(eleccionId);
+  } else {
     return res.redirect("/eleccion");
   }
 
@@ -217,7 +224,7 @@ async function eleccionPuestosInfo(eleccionId) {
   const Candidatos = await Candidato.findAll({ raw: true });
 
   // const Puestos = await Puesto.findAll({ raw: true, where: { eleccionId } });
-  const Puestos = await Puesto.findAll({ raw: true});
+  const Puestos = await Puesto.findAll({ raw: true });
 
   const Partidos = await Partido.findAll({ raw: true });
 

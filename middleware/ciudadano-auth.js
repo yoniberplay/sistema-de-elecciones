@@ -1,5 +1,7 @@
 const Puesto = require("../models/Puesto");
 const Votos = require("../models/Votos");
+const transporter = require("../service/Emailservice");
+
 
 exports.ciudadanoAuth = (req, res, next) => {
   if (!req.session.ciudadano) {
@@ -26,6 +28,14 @@ exports.votingCiudadanoTracking = async (req, res, next) => {
     });
 
     if (votos.length >= puestos.length) {
+
+      await transporter.sendMail({
+        from: "Elecciones notifications",
+        to: Ciudadano.email,
+        subject: `Participacion en eleccion electoral`,
+        html: `Saludos, ${Ciudadano.name} usted ha completado satisfactoriamente su participacion en estas elecciones.`,
+      });
+
       req.session.destroy((err) => {
         if(err) {
           console.log(err);
