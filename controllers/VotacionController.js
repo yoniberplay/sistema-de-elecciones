@@ -11,7 +11,6 @@ const Votos = require("../models/Votos");
 // };
 
 exports.getVotacionPage = async (req, res, next) => {
-
   if (!req.session.eleccion) {
     req.flash("errors", "No hay ninguna eleccion activa.");
   }
@@ -19,7 +18,7 @@ exports.getVotacionPage = async (req, res, next) => {
 
   let puestos;
   try {
-    puestos = await Puesto.findAll();
+    puestos = await Puesto.findAll({ where: { status: true } });
     puestos = puestos.map((result) => {
       return { ...result.dataValues, utilizado: false };
     });

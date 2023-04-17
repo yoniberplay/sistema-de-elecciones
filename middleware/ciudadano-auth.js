@@ -2,7 +2,6 @@ const Puesto = require("../models/Puesto");
 const Votos = require("../models/Votos");
 const transporter = require("../service/Emailservice");
 
-
 exports.ciudadanoAuth = (req, res, next) => {
   if (!req.session.ciudadano) {
     req.flash("errors", "You are not authorized to access this section");
@@ -12,12 +11,11 @@ exports.ciudadanoAuth = (req, res, next) => {
 };
 
 exports.votingCiudadanoTracking = async (req, res, next) => {
-
   const Ciudadano = req.session.ciudadano;
 
   let puestos;
   try {
-    puestos = await Puesto.findAll();
+    puestos = await Puesto.findAll({ where: { status: true } });
     puestos = puestos.map((result) => {
       return { ...result.dataValues, utilizado: false };
     });
@@ -28,7 +26,6 @@ exports.votingCiudadanoTracking = async (req, res, next) => {
     });
 
     if (votos.length >= puestos.length) {
-
       await transporter.sendMail({
         from: "Elecciones notifications",
         to: Ciudadano.email,
@@ -37,7 +34,7 @@ exports.votingCiudadanoTracking = async (req, res, next) => {
       });
 
       req.session.destroy((err) => {
-        if(err) {
+        if (err) {
           console.log(err);
         } else {
           const successMessages = ["Usted ya ha ejercido su derecho al voto."];
@@ -45,17 +42,14 @@ exports.votingCiudadanoTracking = async (req, res, next) => {
             pageTitle: "Sistema de Elecciones",
             hasSuccessMessages: true,
             isCiudadano: false,
-            successMessages: successMessages
+            successMessages: successMessages,
           });
         }
       });
-     
-    }else{
+    } else {
       next();
     }
   } catch (error) {
     console.error("Error:", error);
   }
-
-  
 };

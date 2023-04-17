@@ -148,6 +148,7 @@ Puesto.hasMany(Candidato);
 Candidato.belongsTo(Puesto, { constraint: true, onDelete: "CASCADE" });
 Partido.hasMany(Candidato);
 Candidato.belongsTo(Partido, { constraint: true, onDelete: "CASCADE" });
+
 // Elecciones.belongsToMany(Puesto, { through: EleccionPuesto });
 // Puesto.belongsToMany(Elecciones, { through: EleccionPuesto });
 Elecciones.belongsToMany(Ciudadano, { through: Votos });
@@ -166,7 +167,7 @@ Elecciones.hasMany(Votos);
 const PORT = process.env.PORT || 5000;
 
 sequelize
-  .sync()
+  .sync({ alter: false })
   .then((result) => {
     app.listen(PORT);
     console.log(`Server running on http://localhost:${PORT}`);

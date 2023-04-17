@@ -7,7 +7,10 @@ const Eleccion = require("../models/Elecciones");
 exports.GetCandidatoList = (req, res, next) => {
   Promise.all([
     Candidato.findAll({
-      include: [{ model: Partido }, { model: Puesto }],
+      include: [
+        { model: Partido, where: { status: true } },
+        { model: Puesto, where: { status: true } },
+      ],
     }),
     Eleccion.findOne({ raw: true, where: { status: true } }),
   ])
@@ -58,11 +61,13 @@ exports.GetCreateCandidato = async (req, res, next) => {
       Puesto.findAll({ raw: true, where: { status: true } }),
     ]);
 
-    if(partidos.length <= 0){
-      req.flash("errors", "Para la creacion de un candidado es necesario crear la menos un partido politico.");
+    if (partidos.length <= 0) {
+      req.flash(
+        "errors",
+        "Para la creacion de un candidado es necesario crear la menos un partido politico."
+      );
       return res.redirect("/candidato");
     }
-    
 
     await insertDefaultCandidate();
 
