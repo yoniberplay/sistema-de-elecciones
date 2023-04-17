@@ -15,7 +15,6 @@ async function hay2CandidatosPorPuesto() {
     },
   });
 
-  // console.log(candidatos);
   if (candidatos.length > 1) {
     const candidatosAgrupados = candidatos.reduce((acc, curr) => {
       const puestoName = curr["Puesto.name"];
@@ -58,7 +57,6 @@ exports.GetEleccionesList = async (req, res, next) => {
         canCreateEleccion = eleccion.find((e) => e.status === true);
       }
 
-      // console.log(canCreateEleccion);
       res.render("eleccion/eleccion-list", {
         pageTitle: "eleccion",
         eleccionActive: true,
@@ -195,6 +193,7 @@ exports.PostDeleteElecciones = (req, res, next) => {
 exports.GetResultadosElecciones = async (req, res, next) => {
   const eleccionId = req.params.eleccionId;
   let eleccionInfo;
+  let puestos;
 
   if (!eleccionId) {
     return res.redirect("/eleccion");
@@ -202,18 +201,20 @@ exports.GetResultadosElecciones = async (req, res, next) => {
   const eleccion = await Elecciones.findByPk(eleccionId, { raw: true });
 
   if (eleccion !== null) {
-    eleccionInfo = await eleccionPuestosInfo(eleccionId);
+    const resultado = await eleccionPuestosInfo(eleccionId);
+
+    eleccionInfo = resultado.candidatosPuestos;
+
+    puestos = resultado.Puestos;
   } else {
     return res.redirect("/eleccion");
   }
 
-  // console.log(1111111111111)
-  // console.log(eleccion)
-
   res.status(200).render("eleccion_resultado/resultado", {
-    puestos: eleccionInfo,
-    hasPuestos: eleccionPuestosInfo.length > 0,
+    candidatos: eleccionInfo,
+    hasCandidatos: eleccionInfo.length > 0,
     eleccion,
+    puestos,
   });
 };
 
@@ -223,42 +224,38 @@ async function eleccionPuestosInfo(eleccionId) {
     where: { EleccioneId: eleccionId },
     include: [{ model: Elecciones }, { model: Candidato }, { model: Puesto }],
   });
+  const Puestos = await Puesto.findAll({ raw: true });
+
+  const puestosConVotos = Puestos.filter((puesto) =>
+    Votos.some((voto) => voto.PuestoId === puesto.Id)
+  );
 
   const Candidatos = await Candidato.findAll({ raw: true });
 
-  // const Puestos = await Puesto.findAll({ raw: true, where: { eleccionId } });
-  const Puestos = await Puesto.findAll({ raw: true });
+  const candidatosConVotos = Candidatos.filter((candidato) =>
+    Votos.some((voto) => voto.CandidatoId === candidato.Id)
+  );
 
   const Partidos = await Partido.findAll({ raw: true });
 
-  const candidatosEleccion = Candidatos.map((p) => {
-    const candidato = {
-      id: p.Id,
-      name: p.name,
-      lastName: p.lastName,
-      puestoId: p.PuestoId,
-      img: p.imgPerfil,
-      partidoId: p.PartidoId,
-    };
-    candidato.votos = Votos.filter(
-      (v) => v["Candidato.Id"] === candidato.id
-    ).length;
-    candidato.partido = Partidos.filter((v) => v.Id === candidato.partidoId);
-    candidato.porcentaje = Math.round((candidato.votos / Votos.length) * 100);
-    return candidato;
-  });
+  const candidatosPuestos = candidatosConVotos.map((p) => {
+    const puestoId = p.PuestoId;
+    const puesto = puestosConVotos.filter((f) => f.Id === puestoId);
 
-  const eleccionPuestos = Puestos.map((p) => {
-    const id = p.Id;
-    const candidatos = candidatosEleccion.filter((f) => f.puestoId === id);
-    candidatos.sort((a, b) => b.votos - a.votos);
+    const votos = Votos.filter((v) => v["Candidato.Id"] === p.Id).length;
 
+    const partido = Partidos.filter((v) => v.Id === p.PartidoId);
+    const votosPorcentaje = Math.round((votos / Votos.length) * 100);
     return {
-      id: id,
-      name: p.name,
-      candidatos,
+      ...p,
+      votos,
+      puesto,
+      partido,
+      votosPorcentaje,
     };
   });
 
-  return eleccionPuestos;
+  candidatosPuestos.sort((a, b) => b.votos - a.votos);
+
+  return { candidatosPuestos, Puestos };
 }
