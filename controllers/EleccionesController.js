@@ -241,11 +241,12 @@ async function eleccionPuestosInfo(eleccionId) {
   const candidatosPuestos = candidatosConVotos.map((p) => {
     const puestoId = p.PuestoId;
     const puesto = puestosConVotos.filter((f) => f.Id === puestoId);
+    const votosPuestoTotal = Votos.filter((v) => v.PuestoId === puestoId);
 
     const votos = Votos.filter((v) => v["Candidato.Id"] === p.Id).length;
 
     const partido = Partidos.filter((v) => v.Id === p.PartidoId);
-    const votosPorcentaje = Math.round((votos / Votos.length) * 100);
+    const votosPorcentaje = Math.round((votos / votosPuestoTotal.length) * 100);
     return {
       ...p,
       votos,
