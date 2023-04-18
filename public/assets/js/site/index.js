@@ -22,13 +22,40 @@ $(document).ready(function(){
       })()
     });
 
-  
-    $('#IdDoc').on('input', function() {
-        var cedula = $(this).val();
-        cedula = cedula.replace(/[^0-9-]/g, ''); // Elimina todos los caracteres que no sean números o '-'
-        
-        $(this).val(cedula);
+    const miInput = document.getElementById("IdDoc");
+
+        miInput.addEventListener("input", (e) => {
+        let input = e.target.value;
+
+        // Elimina todos los caracteres que no sean números
+        const numeros = input.replace(/\D/g, "");
+
+        // Agrega los guiones en las posiciones correctas
+        let valorFinal = "";
+        for (let i = 0; i < numeros.length; i++) {
+            if (i === 3 || i === 10) {
+            valorFinal += "-";
+            }
+
+            valorFinal += numeros[i];
+        }
+
+        // Actualiza el valor del input
+        miInput.value = valorFinal;
+
     });
+
+    
+    $('#IdDoc').on('input', function() {
+        let cedula = $(this).val();
+        
+        // Limita la longitud de la cadena a 13 caracteres (incluyendo los guiones)
+        if (cedula.length > 13) {
+          cedula = cedula.slice(0, 13);
+        }
+      
+        $(this).val(cedula);
+      });
 
 
 });
