@@ -6,55 +6,65 @@
   </div>
 </section>
 
-<div class="album">
-  <div class="container">
-    <h2>Puestos disputados</h2>
-    <div class="d-flex justify-content-evenly">
 
-      {{#if hasCandidatos}}
-      
-      {{#each puestos as |puesto|}}
+<div class="container">
+{{#if hasCandidatos}}
 
-      <div class="card col-5">
-        <div class="card-body">
-          <h5 class="card-title">{{puesto.name}}</h5>
 
-          {{#each ../candidatos as |pC|}}
+  {{#each puestos as |puesto|}}
 
-          {{#if (equalValue puesto.Id pC.PuestoId)}}
-          <div>
-            {{#if (equalValue "NINGUNO" pC.name)}}
-            <img class="img-fluid" style="width: 50px;" src="/assets/img/ninguno.jpeg"></img>
-            
-            {{else}}
-            <img class="img-fluid" style="width: 50px;" src="{{pC.imgPerfil}}"></img>
-            {{/if}}
-            
-            <div class="d-flex flex-column">
-              <p class="">Candidato: <span class="btn btn-primary float-end">{{pC.name}}</span></p>
-              <p class="">Votos: <span class="btn btn-primary float-end"> {{pC.votos}} -- {{pC.votosPorcentaje}}%</span></p>
-              
+    <h3 class="text-white text-center">{{puesto.name}}</h3>
 
-              {{#each pC.partido as |pa| }}
-                <p class="">Partido: <span class="btn btn-primary float-end"> {{pa.name}}</span></p>
-              {{/each}}
+    {{#each ../candidatos as |pC|}}
+
+      {{#if (equalValue puesto.Id pC.PuestoId)}}
+
+          <div class="row d-flex justify-content-center align-items-center">
+              <div class="card mb-2 px-0" style="border-radius: .5rem;">
+                <div class="row g-0">
+
+
+                  <div class="col-md-4 gradient-custom text-center text-white"
+                    style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
+                    {{#if (equalValue "NINGUNO" pC.name)}}
+                    <img class="img-fluid my-2" style="width: 150px;" src="/assets/img/ninguno.jpeg"></img>
+                    
+                    {{else}}
+                    <img class="img-fluid my-2" style="width: 150px;" src="{{pC.imgPerfil}}"></img>
+                    {{/if}}
+                    <h5 style="font-size: 40px;">{{pC.name}}</h5>
+                    <i class="far fa-edit mb-5"></i>
+                  </div>
+                  
+                  <div class="col-md-8">
+                    <div class="card-body p-4">
+                      <h6 style="font-size: 30px;">Información</h6>
+                      <hr class="mt-0 mb-4">
+                      <div class="row pt-1">
+
+                        <div class="col-6 mb-3">
+                          <h6 style="font-size: 20px;">Votos</h6>
+                          <p class="text-muted" style="font-size: 20px;"><span>{{pC.votos}} -- {{pC.votosPorcentaje}}%</span></p>
+                        </div>
+
+                        {{#each pC.partido as |pa| }}
+                        <div class="col-6 mb-3">
+                          <h6 style="font-size: 20px;">Partido</h6>
+                          <p class="text-muted" style="font-size: 20px;">{{pa.name}}</p>
+                        </div>
+                        {{/each}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-          </div>
-          {{/if}}
-          {{/each}}
-
-        </div>
-      </div>
-
-      {{/each}}
-
-      {{else}}
-
-      <h1 class="fw-bold text-danger">No hay votos depositados en esta eleccion</h1>
-
       {{/if}}
-
-    </div>
-  </div>
-</div>
+    {{/each}}
+    
+  {{/each}}
+{{else}}
+ <h1 class="fw-bold text-danger">No hay votos depositados en esta eleccion</h1>
+{{/if}}
+</div><!--container-->
