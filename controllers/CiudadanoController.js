@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const Ciudadano = require("../models/Ciudadano");
 const Eleccion = require("../models/Elecciones");
 
@@ -38,15 +39,38 @@ exports.PostCreateCiudadano = (req, res, next) => {
   const email = req.body.email;
   const status = true;
 
-  Ciudadano.create({
-    name: name,
-    IdDoc: IdDoc,
-    lastName: lastName,
-    status: status,
-    email: email,
+  Ciudadano.findOne({
+    where: {
+      [Op.or]: [{ email: email }, { IdDoc: IdDoc }],
+    },
   })
-    .then((result) => {
-      res.redirect("/ciudadano");
+    .then((ciudadano) => {
+      if (ciudadano) {
+        // ciudadano ya existe
+        req.flash(
+          "errors",
+          "Ya existe un ciudadano con el mismo correo electrónico o número de identificación"
+        );
+        return res.redirect("/ciudadano");
+      } else {
+        // crear nuevo ciudadano
+        Ciudadano.create({
+          name: name,
+          IdDoc: IdDoc,
+          lastName: lastName,
+          status: status,
+          email: email,
+        })
+          .then((result) => {
+            res.redirect("/ciudadano");
+          })
+          .catch((err) => {
+            res.render("Error/ErrorInterno", {
+              pageTitle: "Error",
+              mensaje: err,
+            });
+          });
+      }
     })
     .catch((err) => {
       res.render("Error/ErrorInterno", {

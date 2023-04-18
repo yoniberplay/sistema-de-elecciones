@@ -1,13 +1,12 @@
-<section class="py-5 text-center container">
-  <div class="row py-lg-5">
+<section class="py-2 text-center container">
+  <div class="row py-lg-2">
     <div class="col-lg-6 col-md-8 mx-auto">
-      <h1 class="text-white fw-bold">Resultado de eleccion <span class="text-warning">{{eleccion.name}}</span></h1>
-
+      <h1 class="text-white fw-bold">Resultados de eleccion <span class="text-warning">{{eleccion.name}}</span></h1>
     </div>
   </div>
 </section>
 
-<div class="album py-5">
+<div class="album">
   <div class="container">
     <h2>Puestos disputados</h2>
     <div class="d-flex justify-content-evenly">
@@ -52,7 +51,7 @@
 
       {{else}}
 
-      <h1 class="fw-light text-white">No hay Puestos creados en esta eleccion</h1>
+      <h1 class="fw-bold text-danger">No hay votos depositados en esta eleccion</h1>
 
       {{/if}}
 
