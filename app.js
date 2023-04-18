@@ -167,7 +167,7 @@ Elecciones.hasMany(Votos);
 const PORT = process.env.PORT || 5000;
 
 sequelize
-  .sync({ alter: false })
+  .sync({ force: false })
   .then((result) => {
     app.listen(PORT);
     console.log(`Server running on http://localhost:${PORT}`);
