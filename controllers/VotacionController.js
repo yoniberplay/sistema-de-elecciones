@@ -78,7 +78,7 @@ exports.getVotacionPuestosPage = async (req, res, next) => {
       where: {
         PuestoId: puestoId, // Primera condición
         CiudadanoId: Ciudadano.Id, // Segunda condición
-        EleccioneId: eleccionActiva.Id,
+        EleccioneId: EleccioneId.Id,
       },
     });
     votos = votos.map((result) => result.dataValues);
