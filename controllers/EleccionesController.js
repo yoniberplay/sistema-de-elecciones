@@ -205,12 +205,13 @@ exports.GetResultadosElecciones = async (req, res, next) => {
 
     eleccionInfo = resultado.candidatosPuestos;
 
-    puestos = resultado.Puestos;
+    puestos = resultado.puestosConVotos;
   } else {
     return res.redirect("/eleccion");
   }
 
   res.status(200).render("eleccion_resultado/resultado", {
+    pageTitle: "Resultados de eleccion",
     candidatos: eleccionInfo,
     hasCandidatos: eleccionInfo.length > 0,
     eleccion,
@@ -258,5 +259,5 @@ async function eleccionPuestosInfo(eleccionId) {
 
   candidatosPuestos.sort((a, b) => b.votos - a.votos);
 
-  return { candidatosPuestos, Puestos };
+  return { candidatosPuestos, puestosConVotos };
 }

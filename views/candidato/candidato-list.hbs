@@ -22,6 +22,10 @@
 
       {{#each candidatos as |candidato|}}
 
+
+      {{#if (equalValue candidato.name "NINGUNO")}}
+
+      {{else}}
       <div class="card bg-dark text-white col-md-3">
         <img src="{{candidato.imgPerfil}}" class="img-size" alt="{{candidato.name}}">
         <div class="card-body">
@@ -53,11 +57,12 @@
             </form>
 
             {{/if}}
+
           {{/if}}
 
         </div>
       </div>
-
+      {{/if}}
       {{/each}}
 
       {{else}}
