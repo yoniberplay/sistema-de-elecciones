@@ -7,10 +7,7 @@ const Eleccion = require("../models/Elecciones");
 exports.GetCandidatoList = (req, res, next) => {
   Promise.all([
     Candidato.findAll({
-      include: [
-        { model: Partido, where: { status: true } },
-        { model: Puesto, where: { status: true } },
-      ],
+      include: [{ model: Partido }, { model: Puesto }],
     }),
     Eleccion.findOne({ raw: true, where: { status: true } }),
   ])
