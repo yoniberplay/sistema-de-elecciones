@@ -1,15 +1,24 @@
- <h2 class="text-center text-info ">Listado de candidatos disponibles para el puesto de {{puesto.name}}</h2>
+ <h2 class="text-center text-white ">Listado de candidatos disponibles para el puesto de <span class="text-warning">{{puesto.name}}</span></h2>
 
  <div class="album py-5">
   <div class="container">
 
-     <div class="row">
+     <div class="d-flex justify-content-evenly">
 {{#each candidato as |candidato|}}
 
           <div class="card bg-dark text-white col-md-3">
-            <img src="{{candidato.imgPerfil}}" class="card-img-top img-size" alt="{{candidato.name}}">
+            <img src="{{#if (equalValue candidato.name "NINGUNO")}}/assets/img/ninguno.jpeg{{else}}{{candidato.imgPerfil}}{{/if}}" 
+            class="card-img-top img-size" 
+            alt="{{candidato.name}}">
             <div class="card-body">
-              <h5 class="card-title text-center">{{candidato.name}}&nbsp;{{candidato.lastName}}</h5>
+              <div class="d-flex justify-content-center">
+                <h5 class="card-title text-capitalize me-1">{{candidato.name}}</h5>
+                <h5 class="card-title text-capitalize"
+                >{{#if (equalValue candidato.name "NINGUNO")}}{{else}}
+                    {{candidato.lastName}}
+                  {{/if}}
+                </h5>
+              </div>
               <h6 class="card-subtitle mb-2 text-center">{{candidato.Puesto.name}}</h6>
               <h6 class="card-subtitle mb-2 text-muted text-center">{{candidato.Partido.dataValues.name}}</h6>
               <div class="d-flex align-items-center flex-column"> 
@@ -23,7 +32,7 @@
                 <input type="hidden" name="PuestoName" value="{{../puesto.name}}" />
                 <input type="hidden" name="CiudadanoId" value="{{ciudadano.Id}}" />
                 <input type="hidden" name="EleccionesId" value="{{EleccioneId}}" />
-                <button type="submit" class="btn btn-info text-white  w-100"><span class="btnvoto">Votar</span></button>
+                <button type="submit" class="btn btn-outline-success text-white  w-100"><span class="btnvoto">Votar</span></button>
                 
 
               </form>
