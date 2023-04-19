@@ -214,6 +214,7 @@ exports.GetResultadosElecciones = async (req, res, next) => {
     pageTitle: "Resultados de eleccion",
     candidatos: eleccionInfo,
     hasCandidatos: eleccionInfo.length > 0,
+    hasVotos: puestos.length > 0,
     eleccion,
     puestos,
   });

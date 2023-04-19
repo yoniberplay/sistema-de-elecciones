@@ -8,7 +8,7 @@
 
 
 <div class="container">
-{{#if hasCandidatos}}
+{{#if hasVotos}}
 
 
   {{#each puestos as |puesto|}}
@@ -70,6 +70,6 @@
     
   {{/each}}
 {{else}}
- <h1 class="fw-bold text-danger">No hay votos depositados en esta eleccion</h1>
+ <h1 class="py-5 text-wrap fw-bold text-center text-danger">No hay votos depositados en esta eleccion</h1>
 {{/if}}
 </div><!--container-->
