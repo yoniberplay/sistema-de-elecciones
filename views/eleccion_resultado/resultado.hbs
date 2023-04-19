@@ -27,12 +27,13 @@
                   <div class="col-md-4 gradient-custom text-center text-white"
                     style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
                     {{#if (equalValue "NINGUNO" pC.name)}}
-                    <img class="img-fluid my-2" style="width: 150px;" src="/assets/img/ninguno.jpeg"></img>
-                    
-                    {{else}}
-                    <img class="img-fluid my-2" style="width: 150px;" src="{{pC.imgPerfil}}"></img>
-                    {{/if}}
+                    <img class="img-fluid my-2 mt-5" style="width: 150px;" src="/assets/img/ninguno.jpeg"></img>
                     <h5 style="font-size: 40px;">{{pC.name}}</h5>
+                    {{else}}
+                    <img class="img-fluid my-2 mt-5" style="width: 150px;" src="{{pC.imgPerfil}}"></img>
+                    <h5 style="font-size: 40px;">{{pC.name}} {{pC.lastName}}</h5>
+                    {{/if}}
+                    
                     <i class="far fa-edit mb-5"></i>
                   </div>
                   
