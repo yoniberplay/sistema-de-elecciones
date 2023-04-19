@@ -239,7 +239,7 @@ async function eleccionPuestosInfo(eleccionId) {
 
   const Partidos = await Partido.findAll({ raw: true });
 
-  const candidatosPuestos = candidatosConVotos.map((p) => {
+  const candidatosPuestos = Candidatos.map((p) => {
     const puestoId = p.PuestoId;
     const puesto = puestosConVotos.filter((f) => f.Id === puestoId);
     const votosPuestoTotal = Votos.filter((v) => v.PuestoId === puestoId);
